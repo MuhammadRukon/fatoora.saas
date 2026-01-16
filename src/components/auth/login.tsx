@@ -2,28 +2,35 @@
 
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form } from "../ui/form";
 import Link from "next/link";
+import { login } from "@/lib/server-functions";
+import { useRouter } from "next/navigation";
 
 export function Login() {
-  const form = useForm({
+  const router = useRouter();
+  interface LoginData {
+    email: string;
+    password: string;
+  }
+  const form = useForm<LoginData>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(data: any) {
-    console.log(data);
+  async function onSubmit(data: LoginData) {
+    const result = await login(data.email, data.password);
+
+    if (result.success) {
+      router.push("/");
+    } else {
+      console.log(result.error);
+    }
   }
 
   return (
@@ -48,30 +55,39 @@ export function Login() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </a> */}
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  {...form.register("password")}
+                />
+              </div>
+
+              <div>
+                <Button
+                  type="submit"
+                  className="w-full cursor-pointer active:scale-95 transition-all duration-300"
+                >
+                  Login
+                </Button>
+                <p className="text-center text-sm mt-2 text-gray-700">
+                  Don&apos;t have an account?{" "}
+                  <Link href="/register" className="text-blue-500">
+                    Register
+                  </Link>
+                </p>
               </div>
             </div>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="w-full">
-          Login
-        </Button>
-        <p className="text-center text-sm text-gray-700">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-blue-500">
-            Register
-          </Link>
-        </p>
-      </CardFooter>
     </Card>
   );
 }

@@ -43,6 +43,41 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
+      name: "firstName",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "lastName",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "photoUrl",
+      type: "text",
+      required: false,
+    },
+    {
+      name: "companyName",
+      type: "text",
+      required: false,
+    },
+    {
+      name: "taxRegNum",
+      type: "text",
+      required: false,
+    },
+    {
+      name: "country",
+      type: "text",
+      required: false,
+    },
+    {
+      name: "phone",
+      type: "text",
+      required: false,
+    },
+    {
       name: "role",
       type: "select",
       required: true,

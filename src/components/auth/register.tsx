@@ -1,41 +1,83 @@
 "use client";
 
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form } from "../ui/form";
-import Link from "next/link";
+import { useEffect } from "react";
+import { RegisterData } from "@/interface/auth";
+import { register } from "@/lib/server-functions";
+import { useRouter } from "next/navigation";
 
 export function Register() {
-  const form = useForm({
+  const router = useRouter();
+  const form = useForm<RegisterData>({
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      // companyName: "",
+      // taxRegNum: "",
       email: "",
+      // country: "",
+      // photoUrl: "",
+      // phone: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  function onSubmit(data: any) {
-    console.log(data);
+  const password = form.watch("password");
+  const confirmPassword = form.watch("confirmPassword");
+
+  useEffect(() => {
+    if (password !== confirmPassword) {
+      form.setError("confirmPassword", { message: "Passwords do not match" });
+    } else {
+      form.clearErrors("confirmPassword");
+    }
+  }, [password, confirmPassword, form]);
+
+  async function onSubmit(data: RegisterData) {
+    const result = await register(data);
+    if (result.success) {
+      router.push("/");
+    } else {
+      console.error(result.error);
+    }
   }
 
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle className="text-center">Register to your account</CardTitle>
+        <CardTitle className="text-center">Register</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  {...form.register("firstName")}
+                  id="firstName"
+                  type="text"
+                  placeholder="John"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  {...form.register("lastName")}
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  required
+                />
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -65,22 +107,27 @@ export function Register() {
                   required
                   placeholder="Confirm Password"
                 />
+                {form.formState.errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {form.formState.errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex-col gap-2">
+                <Button type="submit" className="w-full">
+                  Register
+                </Button>
+                <p className="text-center text-sm text-gray-700 mt-2">
+                  Already have an account?{" "}
+                  <Link href="/login" className="text-blue-500">
+                    Login
+                  </Link>
+                </p>
               </div>
             </div>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="w-full">
-          Register
-        </Button>
-        <p className="text-center text-sm text-gray-700">
-          Already have an account?{" "}
-          <Link href="/login" className="text-blue-500">
-            Login
-          </Link>
-        </p>
-      </CardFooter>
     </Card>
   );
 }
