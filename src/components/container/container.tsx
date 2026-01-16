@@ -17,18 +17,12 @@ import {
   SidebarTrigger,
 } from "../ui/sidebar";
 import { Separator } from "../ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Logout from "../auth/logout";
+import CustomBreadcrumb from "../custom-breadcrumb/CustomBreadcrumb";
 
 export type ContainerProps = {
   children: React.ReactNode;
@@ -42,19 +36,18 @@ export async function Container({ children }: ContainerProps) {
   }
 
   const data = {
-    versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
     navMain: [
       {
-        title: "Getting Started",
-        url: "#",
+        title: "",
+        url: "/",
         items: [
           {
-            title: "Installation",
-            url: "#",
+            title: "Invoices",
+            url: "/invoices",
           },
           {
-            title: "Project Structure",
-            url: "#",
+            title: "Company Info",
+            url: "/company-info",
           },
         ],
       },
@@ -78,7 +71,7 @@ export async function Container({ children }: ContainerProps) {
                   {item.items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <a href={item.url}>{item.title}</a>
+                        <Link href={item.url}>{item.title}</Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -121,17 +114,7 @@ export async function Container({ children }: ContainerProps) {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Invoices</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Create</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <CustomBreadcrumb />
         </header>
         <div className="container max-h-[calc(100vh-4rem)] overflow-y-auto mx-auto relative p-3 sm:p-10">
           {children}
