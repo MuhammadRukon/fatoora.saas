@@ -149,6 +149,51 @@ export async function createCustomer(name: string) {
   }
 }
 
+export async function getAccounts() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const accounts = await payload.find({
+      collection: "accounts",
+      where: {
+        createdBy: {
+          equals: user.id,
+        },
+      },
+    });
+
+    return { success: true, docs: accounts.docs };
+  } catch (error: any) {
+    console.error("Error fetching accounts:", error);
+    return { success: false, error: error.message || "Failed to fetch accounts" };
+  }
+}
+
+export async function createAccount(name: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const account = await payload.create({
+      collection: "accounts",
+      data: {
+        name,
+        createdBy: user.id,
+      },
+    });
+
+    return { success: true, account };
+  } catch (error: any) {
+    console.error("Error creating account:", error);
+    return { success: false, error: error.message || "Failed to create account" };
+  }
+}
+
 export async function updateCompanyInfo(data: {
   companyName?: string;
   country?: string;

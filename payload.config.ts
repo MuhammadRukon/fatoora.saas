@@ -5,6 +5,7 @@ import { buildConfig } from "payload";
 import { Users } from "./src/collections/Users";
 import { Invoices } from "./src/collections/Invoices";
 import { Customers } from "./src/collections/Customers";
+import { Accounts } from "./src/collections/Accounts";
 import { Media } from "./src/collections/Media";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -35,7 +36,7 @@ export default buildConfig({
     : [],
 
   // Define and configure your collections in this array
-  collections: [Users, Invoices, Customers, Media],
+  collections: [Users, Invoices, Customers, Accounts, Media],
 
   //Define and configure globals (single documents)
   globals: [],

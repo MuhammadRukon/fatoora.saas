@@ -227,7 +227,7 @@ export const Invoices: CollectionConfig = {
             sort: "-invoiceNumber",
           });
 
-          let nextNumber = 100;
+          let nextNumber = 1;
           if (lastInvoice.docs.length > 0) {
             const lastNumber = parseInt(
               (lastInvoice.docs[0] as any).invoiceNumber.split("-")[1]
@@ -235,7 +235,7 @@ export const Invoices: CollectionConfig = {
             nextNumber = lastNumber + 1;
           }
 
-          data.invoiceNumber = `INV-${String(nextNumber).padStart(6, "0")}`;
+          data.invoiceNumber = `INV-${nextNumber}`;
         }
 
         return data;
