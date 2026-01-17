@@ -14,6 +14,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "./separator";
 
 interface Options {
   value: string;
@@ -25,12 +26,14 @@ export function Combobox({
   value,
   onChange,
   onBlur,
+  handleCreate,
 }: {
   placeholder: string;
   options: Options[];
   value?: string;
   onChange?: (value: string) => void;
   onBlur?: () => void;
+  handleCreate?: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -99,6 +102,13 @@ export function Combobox({
                 </CommandItem>
               ))}
             </CommandGroup>
+            <Separator />
+            <div
+              onClick={handleCreate}
+              className="text-sm text-blue-500 text-center py-2 cursor-pointer"
+            >
+              + Create
+            </div>
           </CommandList>
         </Command>
       </PopoverContent>

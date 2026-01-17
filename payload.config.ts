@@ -3,6 +3,9 @@ import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import { buildConfig } from "payload";
 import { Users } from "./src/collections/Users";
+import { Invoices } from "./src/collections/Invoices";
+import { Customers } from "./src/collections/Customers";
+import { Media } from "./src/collections/Media";
 import path from "path";
 import { fileURLToPath } from "url";
 import { bnBd } from "@payloadcms/translations/languages/bnBd";
@@ -20,17 +23,19 @@ export default buildConfig({
     },
   }),
 
-  plugins: [
-    vercelBlobStorage({
-      collections: {
-        media: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    }),
-  ],
+  plugins: process.env.BLOB_READ_WRITE_TOKEN
+    ? [
+        vercelBlobStorage({
+          collections: {
+            media: true,
+          },
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        }),
+      ]
+    : [],
 
   // Define and configure your collections in this array
-  collections: [Users],
+  collections: [Users, Invoices, Customers, Media],
 
   //Define and configure globals (single documents)
   globals: [],

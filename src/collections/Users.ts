@@ -78,6 +78,12 @@ export const Users: CollectionConfig = {
       required: false,
     },
     {
+      name: "companyLogo",
+      type: "upload",
+      relationTo: "media",
+      required: false,
+    },
+    {
       name: "role",
       type: "select",
       required: true,

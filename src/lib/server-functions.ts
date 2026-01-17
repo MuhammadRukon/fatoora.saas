@@ -103,3 +103,135 @@ export async function getCurrentUser() {
     return null;
   }
 }
+
+export async function getCustomers() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const customers = await payload.find({
+      collection: "customers",
+      where: {
+        createdBy: {
+          equals: user.id,
+        },
+      },
+    });
+
+    return { success: true, docs: customers.docs };
+  } catch (error: any) {
+    console.error("Error fetching customers:", error);
+    return { success: false, error: error.message || "Failed to fetch customers" };
+  }
+}
+
+export async function createCustomer(name: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const customer = await payload.create({
+      collection: "customers",
+      data: {
+        name,
+        createdBy: user.id,
+      },
+    });
+
+    return { success: true, customer };
+  } catch (error: any) {
+    console.error("Error creating customer:", error);
+    return { success: false, error: error.message || "Failed to create customer" };
+  }
+}
+
+export async function updateCompanyInfo(data: {
+  companyName?: string;
+  country?: string;
+  taxRegNum?: string;
+  phone?: string;
+}) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const updatedUser = await payload.update({
+      collection: "users",
+      id: user.id,
+      data,
+    });
+
+    return { success: true, user: updatedUser };
+  } catch (error: any) {
+    console.error("Error updating company info:", error);
+    return { success: false, error: error.message || "Failed to update company info" };
+  }
+}
+
+export async function uploadCompanyLogo(formData: FormData) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const file = formData.get("file") as File;
+    if (!file) {
+      return { success: false, error: "No file provided" };
+    }
+
+    // Convert File to Buffer for Payload
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Delete previous logo if it exists
+    if (user.companyLogo) {
+      try {
+        const previousLogoId =
+          typeof user.companyLogo === "object" ? user.companyLogo.id : user.companyLogo;
+
+        await payload.delete({
+          collection: "media",
+          id: previousLogoId,
+        });
+      } catch (deleteError) {
+        console.warn("Failed to delete previous logo:", deleteError);
+        // Continue with upload even if deletion fails
+      }
+    }
+
+    // Upload new logo to media collection
+    const media = await payload.create({
+      collection: "media",
+      data: {
+        alt: `${user.companyName || "Company"} logo`,
+      },
+      file: {
+        data: buffer,
+        mimetype: file.type,
+        name: file.name,
+        size: file.size,
+      },
+    });
+
+    // Update user with new logo
+    const updatedUser = await payload.update({
+      collection: "users",
+      id: user.id,
+      data: {
+        companyLogo: media.id,
+      },
+    });
+
+    return { success: true, mediaId: media.id, media, user: updatedUser };
+  } catch (error: any) {
+    console.error("Error uploading company logo:", error);
+    return { success: false, error: error.message || "Failed to upload logo" };
+  }
+}

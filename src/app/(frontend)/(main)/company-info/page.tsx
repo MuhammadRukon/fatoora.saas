@@ -1,24 +1,31 @@
 import { getCurrentUser } from "@/lib/server-functions";
-import Image from "next/image";
+import { CompanyInfoForm } from "@/components/company/CompanyInfoForm";
 
-export default async function page() {
+export default async function CompanyInfoPage() {
   const user = await getCurrentUser();
-  
+
+  // Extract logo data if it exists
+  const companyLogo =
+    user?.companyLogo && typeof user.companyLogo === "object"
+      ? {
+          id: user.companyLogo.id,
+          url: user.companyLogo.url || "",
+          alt: user.companyLogo.alt || "",
+        }
+      : null;
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Info</h1>
-      <div className=" flex flex-col gap-2 text-center items-center">
-        <div className="border border-gray-200 shadow-xs flex items-center justify-center w-60 h-60 relative rounded-lg">
-          <Image src="/logo.png" alt="logo" fill className="object-contain" />
-        </div>
-
-        <div className="text-sm">
-          <p className="font-semibold text-gray-900">{user?.companyName}</p>
-          <p className="text-gray-600">{user?.country}</p>
-          <p className="text-gray-600">Tax registration number: {user?.taxRegNum}</p>
-        </div>
-      </div>
+    <div className="max-w-4xl">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
+      <CompanyInfoForm
+        initialData={{
+          companyName: user?.companyName || "",
+          country: user?.country || "",
+          taxRegNum: user?.taxRegNum || "",
+          phone: user?.phone || "",
+          companyLogo: companyLogo,
+        }}
+      />
     </div>
   );
 }
