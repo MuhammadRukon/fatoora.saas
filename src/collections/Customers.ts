@@ -1,3 +1,5 @@
+import { CollectionConfig } from "payload";
+
 export const Customers: CollectionConfig = {
   slug: "customers",
   admin: {

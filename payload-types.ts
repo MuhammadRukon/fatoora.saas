@@ -217,6 +217,11 @@ export interface Invoice {
   }[];
   pricesExcludeTax?: boolean | null;
   discountTotal?: number | null;
+  includeQRCode?: boolean | null;
+  /**
+   * QR code data URL (base64 image)
+   */
+  qrCodeData?: string | null;
   subtotal?: number | null;
   totalTax?: number | null;
   total?: number | null;
@@ -369,6 +374,8 @@ export interface InvoicesSelect<T extends boolean = true> {
       };
   pricesExcludeTax?: T;
   discountTotal?: T;
+  includeQRCode?: T;
+  qrCodeData?: T;
   subtotal?: T;
   totalTax?: T;
   total?: T;

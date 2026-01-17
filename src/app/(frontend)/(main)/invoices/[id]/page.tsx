@@ -23,13 +23,12 @@ export default async function InvoiceDetailsPage({
     <InvoiceDetails
       invoiceId={id}
       userData={{
-        companyName: user?.companyName,
-        country: user?.country,
-        taxRegNum: user?.taxRegNum,
-        phone: user?.phone,
+        companyName: user?.companyName || undefined,
+        country: user?.country || undefined,
+        taxRegNum: user?.taxRegNum || undefined,
+        phone: user?.phone || undefined,
         companyLogo: companyLogo,
       }}
     />
   );
 }
-

@@ -17,13 +17,12 @@ export default async function CreateInvoicePage() {
   return (
     <Invoice
       userData={{
-        companyName: user?.companyName,
-        country: user?.country,
-        taxRegNum: user?.taxRegNum,
-        phone: user?.phone,
+        companyName: user?.companyName || undefined,
+        country: user?.country || undefined,
+        taxRegNum: user?.taxRegNum || undefined,
+        phone: user?.phone || undefined,
         companyLogo: companyLogo,
       }}
     />
   );
 }
-
