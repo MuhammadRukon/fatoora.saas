@@ -130,3 +130,141 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+/* Print Styles */
+@media print {
+  /* Hide elements with no-print class */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide sidebar and sidebar-related elements */
+  [data-slot="sidebar"],
+  [data-sidebar="sidebar"],
+  [data-slot="sidebar-gap"],
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-inner"],
+  [data-slot="sidebar-header"],
+  [data-slot="sidebar-footer"],
+  [data-slot="sidebar-content"],
+  [data-sidebar="header"],
+  [data-sidebar="footer"],
+  [data-sidebar="content"] {
+    display: none !important;
+  }
+
+  /* Hide sidebar trigger button */
+  [data-sidebar="trigger"],
+  [data-slot="sidebar-trigger"],
+  button[data-sidebar="trigger"] {
+    display: none !important;
+  }
+
+  /* Hide sidebar rail */
+  [data-sidebar="rail"],
+  [data-slot="sidebar-rail"] {
+    display: none !important;
+  }
+
+  /* Hide the header with breadcrumb and sidebar trigger */
+  header.flex.h-16,
+  header[class*="flex"][class*="h-16"],
+  header[class*="shrink-0"] {
+    display: none !important;
+  }
+
+  /* Hide breadcrumb */
+  nav[aria-label="breadcrumb"],
+  [data-slot="breadcrumb"],
+  [data-slot="breadcrumb-list"],
+  [data-slot="breadcrumb-item"],
+  [data-slot="breadcrumb-link"],
+  [data-slot="breadcrumb-page"] {
+    display: none !important;
+  }
+
+  /* Hide separator in header */
+  header [data-slot="separator"],
+  header [class*="Separator"] {
+    display: none !important;
+  }
+
+  /* Remove sidebar provider spacing */
+  [data-slot="sidebar-inset"] {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Remove container padding and margins for print */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Remove overflow and height restrictions */
+  div[class*="overflow"],
+  div[class*="max-h"] {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Ensure the invoice card takes full width */
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  .shadow-xs,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Make sure images print properly */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Ensure table doesn't break across pages awkwardly */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  /* Ensure colors print (if needed) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

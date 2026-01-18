@@ -94,6 +94,10 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
     return baseAmount;
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -120,13 +124,13 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
   return (
     <div className="space-y-6">
       {/* Header Actions */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center no-print">
         <Button variant="outline" onClick={() => router.push("/invoices")}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Invoices
         </Button>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handlePrint}>
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
@@ -138,40 +142,37 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
       </div>
 
       {/* Invoice Content */}
-      <Card className="p-8">
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Invoice</h1>
-
-          {/* Header with Company Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div className="order-2 lg:order-1">
-              <div className="grid grid-cols-1 gap-6 mb-8">
+      <Card className="p-6 md:p-8">
+        <div className="space-y-8">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 pb-6 border-b border-gray-200">
+            {/* Invoice Title and Details */}
+            <div className="space-y-1">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Invoice</h1>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
                 <div>
-                  <Label className="text-gray-600">Customer</Label>
-                  <p className="text-lg font-medium text-gray-900">
+                  <Label className="text-xs text-gray-500 uppercase tracking-wide">Invoice Number</Label>
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
+                    {invoice.invoiceNumber}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-500 uppercase tracking-wide">Date</Label>
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
+                    {formatDate(invoice.date)}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-500 uppercase tracking-wide">Customer</Label>
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
                     {typeof invoice.customer === "object"
                       ? invoice.customer.name
                       : "Unknown"}
                   </p>
                 </div>
-
                 <div>
-                  <Label className="text-gray-600">Invoice number</Label>
-                  <p className="text-lg font-medium text-gray-900">
-                    {invoice.invoiceNumber}
-                  </p>
-                </div>
-
-                <div>
-                  <Label className="text-gray-600">Date</Label>
-                  <p className="text-lg font-medium text-gray-900">
-                    {formatDate(invoice.date)}
-                  </p>
-                </div>
-
-                <div>
-                  <Label className="text-gray-600">Due date</Label>
-                  <p className="text-lg font-medium text-gray-900">
+                  <Label className="text-xs text-gray-500 uppercase tracking-wide">Due Date</Label>
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
                     {formatDate(invoice.dueDate)}
                   </p>
                 </div>
@@ -179,9 +180,8 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
             </div>
 
             {/* Company Logo and Details */}
-            <div className="flex flex-col order-1 lg:order-2 gap-2 text-center lg:text-right lg:justify-self-end justify-self-center">
-              <Label className="justify-center">Company details</Label>
-              <div className="border border-gray-200 shadow-xs flex items-center justify-center w-60 h-60 relative rounded-lg">
+            <div className="flex flex-col items-center md:items-end gap-3">
+              <div className="flex items-center justify-center w-32 h-32 md:w-36 md:h-36 relative rounded-lg">
                 {userData.companyLogo?.url ? (
                   <Image
                     src={userData.companyLogo.url}
@@ -190,38 +190,48 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
                     className="object-contain"
                   />
                 ) : (
-                  <Image src="/logo.png" alt="logo" fill className="object-contain" />
+                  <Image 
+                    src="/logo.png" 
+                    alt="logo" 
+                    fill 
+                    className="object-contain" 
+                  />
                 )}
               </div>
-
-              <div className="text-sm">
+              <div className="text-sm text-center md:text-right mt-8">
                 <p className="font-semibold text-gray-900">
                   {userData.companyName || "Company Name"}
                 </p>
-                <p className="text-gray-600">{userData.country || "Country"}</p>
-                <p className="text-gray-600">
-                  Tax registration number: {userData.taxRegNum || "—"}
-                </p>
-                {userData.phone && <p className="text-gray-600">{userData.phone}</p>}
+                {userData.country && (
+                  <p className="text-gray-600">{userData.country}</p>
+                )}
+                {userData.taxRegNum && (
+                  <p className="text-gray-600 text-xs mt-1">
+                    Tax Reg: {userData.taxRegNum}
+                  </p>
+                )}
+                {userData.phone && (
+                  <p className="text-gray-600 text-xs">{userData.phone}</p>
+                )}
               </div>
             </div>
           </div>
 
           {/* Entries Section */}
-          <div className="space-y-4 mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Entries</h2>
-              <div className="text-sm text-gray-600">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-semibold text-gray-900">Items</h2>
+              <div className="text-xs text-gray-500">
                 Prices are{" "}
-                <span className="font-medium">
-                  {invoice.pricesExcludeTax ? "exc. tax" : "inc. tax"}
+                <span className="font-medium text-gray-700">
+                  {invoice.pricesExcludeTax ? "excluding tax" : "including tax"}
                 </span>
               </div>
             </div>
 
             {/* Entries Table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm bg-gray-50 rounded-xl">
+              <table className="w-full text-sm rounded-xl">
                 <thead className="border-b border-gray-200">
                   <tr className="*:py-3 *:px-4 *:font-semibold text-gray-700">
                     <th className="text-left">Description</th>
@@ -253,16 +263,16 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
           </div>
 
           {/* Summary Section with QR Code */}
-          <div className="flex justify-between items-start mt-8">
-            {/* QR Code Section - Left Side */}
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6 pt-4 border-gray-200">
+            {/* QR Code Section */}
             {invoice.qrCodeData && (
-              <div className="flex flex-col gap-4">
-                <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+              <div className="flex flex-col items-center md:items-start">
+                <div className="rounded-lg p-3">
                   <Image
                     src={invoice.qrCodeData}
                     alt="Invoice QR Code"
-                    width={200}
-                    height={200}
+                    width={150}
+                    height={150}
                     className="rounded"
                   />
                   <p className="text-xs text-gray-500 text-center mt-2">
@@ -273,16 +283,16 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
             )}
 
             {/* Summary - Right Side */}
-            <div className="w-full max-w-xs space-y-2">
+            <div className={`w-full ${invoice.qrCodeData ? 'md:w-auto md:min-w-[280px]' : 'md:max-w-xs md:ml-auto'} space-y-2`}>
               <div className="flex justify-between text-sm py-2 border-b border-gray-200">
                 <span className="text-gray-600">
                   Subtotal {invoice.pricesExcludeTax ? "(excl. VAT)" : "(incl. VAT)"}
                 </span>
-                <span className="font-medium">SAR {invoice.subtotal.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">SAR {invoice.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm py-2 border-b border-gray-200">
                 <span className="text-gray-600">VAT Amount</span>
-                <span className="font-medium">SAR {invoice.totalTax.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">SAR {invoice.totalTax.toFixed(2)}</span>
               </div>
               {invoice.discountTotal > 0 && (
                 <div className="flex justify-between text-sm py-2 border-b border-gray-200">
@@ -292,9 +302,9 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
                   </span>
                 </div>
               )}
-              <div className="flex justify-between font-semibold text-lg py-3">
-                <span>Total (incl. VAT)</span>
-                <span>SAR {invoice.total.toFixed(2)}</span>
+              <div className="flex justify-between font-semibold text-lg py-1 mt-2">
+                <span className="text-gray-900">Total (incl. VAT)</span>
+                <span className="text-gray-900">SAR {invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
