@@ -127,7 +127,12 @@ export async function getCustomers() {
   }
 }
 
-export async function createCustomer(name: string) {
+export async function createCustomer(data: {
+  name: string;
+  taxRegNum?: string;
+  country?: string;
+  vatTreatment: string;
+}) {
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -137,9 +142,12 @@ export async function createCustomer(name: string) {
     const customer = await payload.create({
       collection: "customers",
       data: {
-        name,
+        name: data.name,
+        taxRegNum: data.taxRegNum,
+        country: data.country,
+        vatTreatment: data.vatTreatment,
         createdBy: user.id,
-      },
+      } as any,
     });
 
     return { success: true, customer };

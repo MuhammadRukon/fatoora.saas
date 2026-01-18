@@ -206,6 +206,10 @@ export interface Media {
 export interface Invoice {
   id: string;
   invoiceNumber: string;
+  /**
+   * Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled
+   */
+  status: 'active' | 'void' | 'cancelled';
   customer: string | Customer;
   date: string;
   dueDate: string;
@@ -238,6 +242,40 @@ export interface Invoice {
 export interface Customer {
   id: string;
   name: string;
+  /**
+   * VAT registration number (if applicable)
+   */
+  taxRegNum?: string | null;
+  country?:
+    | (
+        | 'SA'
+        | 'AE'
+        | 'KW'
+        | 'QA'
+        | 'BH'
+        | 'OM'
+        | 'JO'
+        | 'LB'
+        | 'IQ'
+        | 'SY'
+        | 'YE'
+        | 'PS'
+        | 'EG'
+        | 'SD'
+        | 'LY'
+        | 'TN'
+        | 'DZ'
+        | 'MA'
+        | 'MR'
+        | 'SO'
+        | 'DJ'
+        | 'KM'
+      )
+    | null;
+  /**
+   * Customer's VAT registration status in Saudi Arabia
+   */
+  vatTreatment: 'not_registered' | 'registered';
   createdBy: string | User;
   updatedAt: string;
   createdAt: string;
@@ -376,6 +414,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface InvoicesSelect<T extends boolean = true> {
   invoiceNumber?: T;
+  status?: T;
   customer?: T;
   date?: T;
   dueDate?: T;
@@ -406,6 +445,9 @@ export interface InvoicesSelect<T extends boolean = true> {
  */
 export interface CustomersSelect<T extends boolean = true> {
   name?: T;
+  taxRegNum?: T;
+  country?: T;
+  vatTreatment?: T;
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;

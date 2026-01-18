@@ -31,6 +31,7 @@ interface Invoice {
   subtotal: number;
   totalTax: number;
   total: number;
+  qrCodeData?: string;
 }
 
 interface UserData {
@@ -84,7 +85,13 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
   };
 
   const calculateLineTotal = (item: RowEntry) => {
-    return item.quantity * item.price;
+    const baseAmount = item.quantity * item.price;
+    // If prices exclude tax, add VAT to get total
+    if (invoice?.pricesExcludeTax) {
+      return baseAmount + (baseAmount * item.taxRate) / 100;
+    }
+    // If prices include tax, the price already includes VAT
+    return baseAmount;
   };
 
   if (isLoading) {
@@ -232,11 +239,11 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
                       <td className="text-gray-600">{item.account}</td>
                       <td className="text-center text-gray-900">{item.quantity}</td>
                       <td className="text-right text-gray-900">
-                        ৳ {item.price.toFixed(2)}
+                        SAR {item.price.toFixed(2)}
                       </td>
                       <td className="text-right text-gray-600">{item.taxRate}%</td>
                       <td className="text-right font-medium text-gray-900">
-                        ৳ {calculateLineTotal(item).toFixed(2)}
+                        SAR {calculateLineTotal(item).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -245,28 +252,49 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
             </div>
           </div>
 
-          {/* Summary Section */}
-          <div className="flex justify-end mt-8">
+          {/* Summary Section with QR Code */}
+          <div className="flex justify-between items-start mt-8">
+            {/* QR Code Section - Left Side */}
+            {invoice.qrCodeData && (
+              <div className="flex flex-col gap-4">
+                <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+                  <Image
+                    src={invoice.qrCodeData}
+                    alt="Invoice QR Code"
+                    width={200}
+                    height={200}
+                    className="rounded"
+                  />
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    ZATCA E-Invoice QR Code
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Summary - Right Side */}
             <div className="w-full max-w-xs space-y-2">
               <div className="flex justify-between text-sm py-2 border-b border-gray-200">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">৳ {invoice.subtotal.toFixed(2)}</span>
+                <span className="text-gray-600">
+                  Subtotal {invoice.pricesExcludeTax ? "(excl. VAT)" : "(incl. VAT)"}
+                </span>
+                <span className="font-medium">SAR {invoice.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm py-2 border-b border-gray-200">
-                <span className="text-gray-600">Total VAT</span>
-                <span className="font-medium">৳ {invoice.totalTax.toFixed(2)}</span>
+                <span className="text-gray-600">VAT Amount</span>
+                <span className="font-medium">SAR {invoice.totalTax.toFixed(2)}</span>
               </div>
               {invoice.discountTotal > 0 && (
                 <div className="flex justify-between text-sm py-2 border-b border-gray-200">
                   <span className="text-gray-600">Discount</span>
                   <span className="font-medium text-red-600">
-                    - ৳ {invoice.discountTotal.toFixed(2)}
+                    - SAR {invoice.discountTotal.toFixed(2)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between font-semibold text-lg py-3">
-                <span>Total</span>
-                <span>৳ {invoice.total.toFixed(2)}</span>
+                <span>Total (incl. VAT)</span>
+                <span>SAR {invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

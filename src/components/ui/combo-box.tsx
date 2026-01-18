@@ -27,6 +27,8 @@ export function Combobox({
   onChange,
   onBlur,
   handleCreate,
+  showCreateButton = true,
+  isSearchEnabled = true,
 }: {
   placeholder: string;
   options: Options[];
@@ -34,6 +36,8 @@ export function Combobox({
   onChange?: (value: string) => void;
   onBlur?: () => void;
   handleCreate?: () => void;
+  showCreateButton?: boolean;
+  isSearchEnabled?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -68,8 +72,8 @@ export function Combobox({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" style={{ width: width ? `${width}px` : undefined }}>
-        <Command shouldFilter={true}>
-          <CommandInput placeholder={placeholder} className="h-9" />
+        <Command shouldFilter={isSearchEnabled}>
+          {isSearchEnabled && <CommandInput placeholder={placeholder} className="h-9" />}
           <CommandList>
             <CommandEmpty>Nothing found.</CommandEmpty>
             <CommandGroup>
@@ -102,13 +106,17 @@ export function Combobox({
                 </CommandItem>
               ))}
             </CommandGroup>
-            <Separator />
-            <div
-              onClick={handleCreate}
-              className="text-sm text-blue-500 text-center py-2 cursor-pointer"
-            >
-              + Create
-            </div>
+            {showCreateButton && handleCreate && (
+              <>
+                <Separator />
+                <div
+                  onClick={handleCreate}
+                  className="text-sm text-blue-500 text-center py-2 cursor-pointer"
+                >
+                  + Create
+                </div>
+              </>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

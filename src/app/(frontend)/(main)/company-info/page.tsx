@@ -15,8 +15,10 @@ export default async function CompanyInfoPage() {
       : null;
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
+    <>
+    <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
+    <div className="max-w-4xl mx-auto">
+    
       <CompanyInfoForm
         initialData={{
           companyName: user?.companyName || "",
@@ -27,5 +29,6 @@ export default async function CompanyInfoPage() {
         }}
       />
     </div>
+    </>
   );
 }

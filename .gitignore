@@ -41,5 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 
-IMPLEMENTATION_STEPS.md
-SAAS_SETUP_GUIDE.md
+*.md

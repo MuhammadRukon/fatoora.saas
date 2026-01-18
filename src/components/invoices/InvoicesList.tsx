@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface Invoice {
   id: string;
@@ -25,7 +25,6 @@ export function InvoicesList() {
   const router = useRouter();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInvoices();
@@ -45,36 +44,6 @@ export function InvoicesList() {
       console.error("Error fetching invoices:", error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleDelete = async (invoiceId: string, invoiceNumber: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete invoice ${invoiceNumber}? This action cannot be undone.`
-    );
-
-    if (!confirmed) return;
-
-    setDeletingId(invoiceId);
-    try {
-      const response = await fetch(`/api/invoices/${invoiceId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        // Remove the deleted invoice from the list
-        setInvoices((prev) => prev.filter((inv) => inv.id !== invoiceId));
-        alert("Invoice deleted successfully");
-      } else {
-        const error = await response.json();
-        console.error("Failed to delete invoice:", error);
-        alert("Failed to delete invoice. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error deleting invoice:", error);
-      alert("An error occurred while deleting the invoice.");
-    } finally {
-      setDeletingId(null);
     }
   };
 
@@ -180,7 +149,7 @@ export function InvoicesList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     <div className="text-sm font-medium text-gray-900">
-                      ৳ {invoice.total.toFixed(2)}
+                      SAR {invoice.total.toFixed(2)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -194,24 +163,6 @@ export function InvoicesList() {
                         }}
                       >
                         View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(invoice.id, invoice.invoiceNumber);
-                        }}
-                        disabled={deletingId === invoice.id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        {deletingId === invoice.id ? (
-                          "Deleting..."
-                        ) : (
-                          <>
-                            <Trash2 className="w-4 h-4" />
-                          </>
-                        )}
                       </Button>
                     </div>
                   </td>

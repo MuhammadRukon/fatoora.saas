@@ -34,19 +34,9 @@ export const Invoices: CollectionConfig = {
       }
       return false;
     },
-    delete: ({ req: { user } }) => {
-      if (user) {
-        if (user.role === "admin") {
-          return true;
-        }
-        return {
-          createdBy: {
-            equals: user.id,
-          },
-        };
-      }
-      return false;
-    },
+    // ZATCA Phase 1 Requirement: Invoices cannot be deleted
+    // Use status field to void/cancel invoices instead
+    delete: () => false,
   },
   fields: [
     {
@@ -54,6 +44,29 @@ export const Invoices: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
+    },
+    {
+      name: "status",
+      type: "select",
+      required: true,
+      defaultValue: "active",
+      options: [
+        {
+          label: "Active",
+          value: "active",
+        },
+        {
+          label: "Void",
+          value: "void",
+        },
+        {
+          label: "Cancelled",
+          value: "cancelled",
+        },
+      ],
+      admin: {
+        description: "Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled",
+      },
     },
     {
       name: "customer",
@@ -153,9 +166,19 @@ export const Invoices: CollectionConfig = {
         beforeChange: [
           ({ data }) => {
             if (!data?.rowEntries) return 0;
+            const pricesExcludeTax = data?.pricesExcludeTax ?? true;
+            
             return data.rowEntries.reduce((sum: number, item: any) => {
-              const lineTotal = (item.quantity || 0) * (item.price || 0);
-              return sum + lineTotal;
+              const baseAmount = (item.quantity || 0) * (item.price || 0);
+              if (pricesExcludeTax) {
+                // Subtotal is base amount (excl. VAT)
+                return sum + baseAmount;
+              } else {
+                // Subtotal is base amount minus VAT (extract base from price that includes VAT)
+                const taxRate = item.taxRate || 0;
+                const baseWithoutVAT = baseAmount / (1 + taxRate / 100);
+                return sum + baseWithoutVAT;
+              }
             }, 0);
           },
         ],
@@ -171,10 +194,20 @@ export const Invoices: CollectionConfig = {
         beforeChange: [
           ({ data }) => {
             if (!data?.rowEntries) return 0;
+            const pricesExcludeTax = data?.pricesExcludeTax ?? true;
+            
             return data.rowEntries.reduce((sum: number, item: any) => {
-              const lineTotal = (item.quantity || 0) * (item.price || 0);
-              const tax = (lineTotal * (item.taxRate || 0)) / 100;
-              return sum + tax;
+              const baseAmount = (item.quantity || 0) * (item.price || 0);
+              const taxRate = item.taxRate || 0;
+              
+              if (pricesExcludeTax) {
+                // VAT calculated on base amount
+                return sum + (baseAmount * taxRate) / 100;
+              } else {
+                // VAT extracted from price that includes VAT
+                const vatAmount = baseAmount - baseAmount / (1 + taxRate / 100);
+                return sum + vatAmount;
+              }
             }, 0);
           },
         ],
@@ -189,8 +222,34 @@ export const Invoices: CollectionConfig = {
       hooks: {
         beforeChange: [
           ({ data }) => {
-            const subtotal = data?.subtotal || 0;
-            const totalTax = data?.totalTax || 0;
+            if (!data?.rowEntries) return 0;
+            const pricesExcludeTax = data?.pricesExcludeTax ?? true;
+            
+            // Calculate subtotal
+            const subtotal = data.rowEntries.reduce((sum: number, item: any) => {
+              const baseAmount = (item.quantity || 0) * (item.price || 0);
+              if (pricesExcludeTax) {
+                return sum + baseAmount;
+              } else {
+                const taxRate = item.taxRate || 0;
+                const baseWithoutVAT = baseAmount / (1 + taxRate / 100);
+                return sum + baseWithoutVAT;
+              }
+            }, 0);
+            
+            // Calculate tax
+            const totalTax = data.rowEntries.reduce((sum: number, item: any) => {
+              const baseAmount = (item.quantity || 0) * (item.price || 0);
+              const taxRate = item.taxRate || 0;
+              
+              if (pricesExcludeTax) {
+                return sum + (baseAmount * taxRate) / 100;
+              } else {
+                const vatAmount = baseAmount - baseAmount / (1 + taxRate / 100);
+                return sum + vatAmount;
+              }
+            }, 0);
+            
             const discount = data?.discountTotal || 0;
             return subtotal + totalTax - discount;
           },
