@@ -57,6 +57,7 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
 
   useEffect(() => {
     fetchInvoice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoiceId]);
 
   const fetchInvoice = async () => {
@@ -95,7 +96,29 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
   };
 
   const handlePrint = () => {
-    window.print();
+    // Open print page in new window
+    const returnUrl = encodeURIComponent(window.location.href);
+    window.open(
+      `/print/invoice/${invoiceId}?print=true&return=${returnUrl}`,
+      "_blank"
+    );
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      const returnUrl = encodeURIComponent(window.location.href);
+      const pdfWindow = window.open(
+        `/print/invoice/${invoiceId}?pdf=true&return=${returnUrl}`,
+        "_blank"
+      );
+      // Store return URL in sessionStorage as backup
+      if (pdfWindow) {
+        sessionStorage.setItem("invoiceReturnUrl", window.location.href);
+      }
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      alert("Failed to download PDF. Please try again.");
+    }
   };
 
   if (isLoading) {
@@ -134,7 +157,7 @@ export function InvoiceDetails({ invoiceId, userData }: InvoiceDetailsProps) {
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleDownloadPDF}>
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
