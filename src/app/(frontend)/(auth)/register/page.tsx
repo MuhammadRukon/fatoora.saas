@@ -2,21 +2,24 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form } from "@/components/ui/form";
-import { useEffect, useState } from "react";
-import { RegisterData } from "@/interface/auth";
+import { useTransition } from "react";
 import { register } from "@/lib/server-functions";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { registerSchema, type RegisterSchema } from "@/schemas/auth.schema";
+import { LoaderIcon } from "@/components/loader";
 
 export default function Register() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<RegisterData>({
+  const [isPending, startTransition] = useTransition();
+  
+  const form = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -24,29 +27,19 @@ export default function Register() {
       password: "",
       confirmPassword: "",
     },
+    mode: "onSubmit",
   });
 
-  const password = form.watch("password");
-  const confirmPassword = form.watch("confirmPassword");
-
-  useEffect(() => {
-    if (password !== confirmPassword) {
-      form.setError("confirmPassword", { message: "Passwords do not match" });
-    } else {
-      form.clearErrors("confirmPassword");
-    }
-  }, [password, confirmPassword, form]);
-
-  async function onSubmit(data: RegisterData) {
-    setIsLoading(true);
-    const result = await register(data);
-    if (result.success) {
-      setIsLoading(false);
-      router.push("/");
-    } else {
-      console.error(result.error);
-    }
-    setIsLoading(false);
+  async function onSubmit(data: RegisterSchema) {
+    startTransition(async () => {
+      const result = await register(data);
+      if (result.success) {
+        router.replace("/");
+        router.refresh();
+      } else {
+        form.setError("root", { message: result.error || "Registration failed" });
+      }
+    });
   }
 
   return (
@@ -58,6 +51,12 @@ export default function Register() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
+              {form.formState.errors.root && (
+                <p className="text-red-500 text-sm text-center" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
@@ -65,9 +64,17 @@ export default function Register() {
                   id="firstName"
                   type="text"
                   placeholder="John"
-                  required
+                  autoComplete="given-name"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.firstName}
                 />
+                {form.formState.errors.firstName && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.firstName.message}
+                  </p>
+                )}
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
@@ -75,9 +82,17 @@ export default function Register() {
                   id="lastName"
                   type="text"
                   placeholder="Doe"
-                  required
+                  autoComplete="family-name"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.lastName}
                 />
+                {form.formState.errors.lastName && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.lastName.message}
+                  </p>
+                )}
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -85,41 +100,69 @@ export default function Register() {
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  autoComplete="email"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.email}
                 />
+                {form.formState.errors.email && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   {...form.register("password")}
                   id="password"
                   type="password"
-                  required
                   placeholder="Password"
+                  autoComplete="new-password"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.password}
                 />
+                {form.formState.errors.password && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
               </div>
+              
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   {...form.register("confirmPassword")}
                   id="confirmPassword"
                   type="password"
-                  required
                   placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.confirmPassword}
                 />
                 {form.formState.errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-red-500 text-xs" role="alert">
                     {form.formState.errors.confirmPassword.message}
                   </p>
                 )}
               </div>
+              
               <div className="flex-col gap-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Register"}
+                <Button 
+                  type="submit" 
+                  className="w-full cursor-pointer active:scale-95 transition-transform duration-150" 
+                  disabled={isPending}
+                  aria-busy={isPending}
+                >
+                  {isPending ? <LoaderIcon /> : "Register"}
                 </Button>
                 <p className="text-center text-sm text-gray-700 mt-2">
                   Already have an account?{" "}
-                  <Link href="/login" className="text-blue-500">
+                  <Link 
+                    href="/login" 
+                    className="text-blue-500 hover:underline"
+                    prefetch={true}
+                  >
                     Login
                   </Link>
                 </p>

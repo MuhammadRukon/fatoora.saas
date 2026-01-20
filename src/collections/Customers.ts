@@ -7,7 +7,6 @@ export const Customers: CollectionConfig = {
     defaultColumns: ["name"],
   },
   access: {
-    // Users can only read/update/delete their own customers
     read: ({ req: { user } }) => {
       if (user) {
         if (user.role === "admin") {

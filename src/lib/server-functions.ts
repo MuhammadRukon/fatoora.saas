@@ -2,40 +2,38 @@
 
 import { cache } from "react";
 import { payload } from "./payload";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { RegisterData } from "@/interface/auth";
 
 export async function login(email: string, password: string) {
   try {
-    const headersList = await headers();
-    const cookieHeader = headersList.get("cookie") || "";
-
     const result = await payload.login({
       collection: "users",
       data: { email, password },
-      req: {
-        headers: {
-          cookie: cookieHeader,
-        },
-      } as any,
     });
 
     if (!result.token) {
       return { success: false, error: "Invalid credentials" };
     }
+    
+    // Set cookie with optimal settings
     const cookieStore = await cookies();
     cookieStore.set("payload-token", result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     return { success: true, user: result.user };
   } catch (error: any) {
-    return { success: false, error: error.message || "Login failed" };
+    // Return user-friendly error messages
+    const errorMessage = error.message?.includes("credentials") 
+      ? "Invalid email or password" 
+      : "Login failed. Please try again.";
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -83,8 +81,29 @@ export async function logout() {
   redirect("/login");
 }
 
-// multiple components call it, so we need to cache it
+// Optimized getCurrentUser with React cache for deduplication across server components
 export const getCurrentUser = cache(async () => {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("payload-token");
+
+    if (!token) return null;
+
+    const headersList = await headers();
+
+    // Auth call with headers - Payload reads from Next.js context
+    const { user } = await payload.auth({
+      headers: headersList,
+    });
+
+    return user || null;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+});
+
+export const getCurrentUserCompanyData = cache(async () => {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("payload-token");
@@ -96,8 +115,23 @@ export const getCurrentUser = cache(async () => {
     const { user } = await payload.auth({
       headers: headersList,
     });
+    
+    if (!user) return null;
 
-    return user || null;
+    const userData = await payload.findByID({
+      collection: "users",
+      id: user.id,
+      depth: 1, 
+      select: {
+        companyName: true,
+        country: true,
+        taxRegNum: true,
+        phone: true,
+        companyLogo: true,
+      },
+    });
+
+    return userData;
   } catch (error) {
     console.error(error);
     return null;

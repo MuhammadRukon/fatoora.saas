@@ -1,6 +1,6 @@
 import { InvoiceDisplay } from "@/components/invoices/InvoiceDisplay";
 import { InvoiceActions } from "@/components/invoices/InvoiceActions";
-import { getCurrentUser } from "@/lib/server-functions";
+import { getCurrentUser, getCurrentUserCompanyData } from "@/lib/server-functions";
 import { payload } from "@/lib/payload";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -19,28 +19,32 @@ export default async function InvoiceDetailsPage({
     notFound();
   }
 
-  // Fetch invoice data server-side
-  const invoiceResult = await payload.findByID({
-    collection: "invoices",
-    id,
-    depth: 1,
-    overrideAccess:false,
-    user: user,
-    select: {
-      id: true,
-      invoiceNumber: true,
-      customer: true,
-      date: true,
-      dueDate: true,
-      rowEntries: true,
-      pricesExcludeTax: true,
-      discountTotal: true,
-      subtotal: true,
-      totalTax: true,
-      total: true,
-      qrCodeData: true,
-    },
-  });
+  const [invoiceResult, userData] = await Promise.all([
+
+    payload.findByID({
+      collection: "invoices",
+      id,
+      depth: 1,
+      overrideAccess: false,
+      user: user,
+      select: {
+        id: true,
+        invoiceNumber: true,
+        customer: true,
+        date: true,
+        dueDate: true,
+        rowEntries: true,
+        pricesExcludeTax: true,
+        discountTotal: true,
+        subtotal: true,
+        totalTax: true,
+        total: true,
+        qrCodeData: true,
+      },
+    }),
+
+    getCurrentUserCompanyData(),
+  ]);
 
   if (!invoiceResult) {
     return (
@@ -55,12 +59,16 @@ export default async function InvoiceDetailsPage({
     );
   }
 
+  if (!userData) {
+    notFound();
+  }
+
   // Extract logo data if it exists
   const companyLogo =
-    user.companyLogo && typeof user.companyLogo === "object"
+    userData.companyLogo && typeof userData.companyLogo === "object"
       ? {
-          url: user.companyLogo.url || "",
-          alt: user.companyLogo.alt || "",
+          url: userData.companyLogo.url || "",
+          alt: userData.companyLogo.alt || "",
         }
       : null;
 
@@ -70,10 +78,10 @@ export default async function InvoiceDetailsPage({
       <InvoiceDisplay
         invoice={invoiceResult as any}
         userData={{
-          companyName: user.companyName || undefined,
-          country: user.country || undefined,
-          taxRegNum: user.taxRegNum || undefined,
-          phone: user.phone || undefined,
+          companyName: userData.companyName || undefined,
+          country: userData.country || undefined,
+          taxRegNum: userData.taxRegNum || undefined,
+          phone: userData.phone || undefined,
           companyLogo: companyLogo,
         }}
       />

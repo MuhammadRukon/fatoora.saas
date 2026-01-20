@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,34 +10,35 @@ import { Form } from "@/components/ui/form";
 import Link from "next/link";
 import { login } from "@/lib/server-functions";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useTransition } from "react";
+import { loginSchema, type LoginSchema } from "@/schemas/auth.schema";
+import { LoaderIcon } from "@/components/loader";
 
 export default function Login() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  interface LoginData {
-    email: string;
-    password: string;
-  }
-  const form = useForm<LoginData>({
+  const [isPending, startTransition] = useTransition();
+  
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
+    mode: "onSubmit", // Only validate on submit for better performance
   });
 
-  async function onSubmit(data: LoginData) {
-    setIsLoading(true);
-    const result = await login(data.email, data.password);
+  async function onSubmit(data: LoginSchema) {
+    startTransition(async () => {
+      const result = await login(data.email, data.password);
 
-    if (result.success) {
-      setIsLoading(false);
-      router.push("/");
-    } else {
-      console.log(result.error);
-    }
-    setIsLoading(false);
+      if (result.success) {
+        // Use replace for better UX (no back button to login page after auth)
+        router.replace("/");
+        router.refresh();
+      } else {
+        form.setError("root", { message: result.error || "Login failed" });
+      }
+    });
   }
 
   return (
@@ -48,6 +50,12 @@ export default function Login() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
+              {form.formState.errors.root && (
+                <p className="text-red-500 text-sm text-center" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -55,38 +63,50 @@ export default function Login() {
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  autoComplete="email"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.email}
                 />
+                {form.formState.errors.email && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
               </div>
+              
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  {/* <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a> */}
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  required
+                  autoComplete="current-password"
+                  disabled={isPending}
+                  aria-invalid={!!form.formState.errors.password}
                   {...form.register("password")}
                 />
+                {form.formState.errors.password && (
+                  <p className="text-red-500 text-xs" role="alert">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <Button
                   type="submit"
-                  className="w-full cursor-pointer active:scale-95 transition-all duration-300"
-                  disabled={isLoading}
+                  className="w-full cursor-pointer active:scale-95 transition-transform duration-150"
+                  disabled={isPending}
+                  aria-busy={isPending}
                 >
-                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Login"}
+                  {isPending ? <LoaderIcon /> : "Login"}
                 </Button>
                 <p className="text-center text-sm mt-2 text-gray-700">
                   Don&apos;t have an account?{" "}
-                  <Link href="/register" className="text-blue-500">
+                  <Link 
+                    href="/register" 
+                    className="text-blue-500 hover:underline"
+                    prefetch={true}
+                  >
                     Register
                   </Link>
                 </p>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { payload } from "@/lib/payload";
 import { getCurrentUser } from "@/lib/server-functions";
@@ -16,6 +15,15 @@ export default async function InvoicesList() {
     collection: "invoices",
     overrideAccess: false,
     user: user,
+    depth: 1,
+    select: {
+      id: true,
+      invoiceNumber: true,
+      customer: true, 
+      date: true,
+      dueDate: true,
+      total: true,
+    },
   });
 
   const invoices = data.docs || [];
@@ -26,8 +34,7 @@ export default async function InvoicesList() {
         <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
         <Button asChild>
           <Link href="/invoices/create">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Invoice
+            + Create Invoice
           </Link>
         </Button>
       </div>
