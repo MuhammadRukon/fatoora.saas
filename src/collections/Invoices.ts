@@ -12,6 +12,7 @@ export const Invoices: CollectionConfig = {
         if (user.role === "admin") {
           return true;
         }
+
         return {
           createdBy: {
             equals: user.id,
@@ -65,7 +66,8 @@ export const Invoices: CollectionConfig = {
         },
       ],
       admin: {
-        description: "Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled",
+        description:
+          "Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled",
       },
     },
     {
@@ -167,7 +169,7 @@ export const Invoices: CollectionConfig = {
           ({ data }) => {
             if (!data?.rowEntries) return 0;
             const pricesExcludeTax = data?.pricesExcludeTax ?? true;
-            
+
             return data.rowEntries.reduce((sum: number, item: any) => {
               const baseAmount = (item.quantity || 0) * (item.price || 0);
               if (pricesExcludeTax) {
@@ -195,11 +197,11 @@ export const Invoices: CollectionConfig = {
           ({ data }) => {
             if (!data?.rowEntries) return 0;
             const pricesExcludeTax = data?.pricesExcludeTax ?? true;
-            
+
             return data.rowEntries.reduce((sum: number, item: any) => {
               const baseAmount = (item.quantity || 0) * (item.price || 0);
               const taxRate = item.taxRate || 0;
-              
+
               if (pricesExcludeTax) {
                 // VAT calculated on base amount
                 return sum + (baseAmount * taxRate) / 100;
@@ -224,7 +226,7 @@ export const Invoices: CollectionConfig = {
           ({ data }) => {
             if (!data?.rowEntries) return 0;
             const pricesExcludeTax = data?.pricesExcludeTax ?? true;
-            
+
             // Calculate subtotal
             const subtotal = data.rowEntries.reduce((sum: number, item: any) => {
               const baseAmount = (item.quantity || 0) * (item.price || 0);
@@ -236,12 +238,12 @@ export const Invoices: CollectionConfig = {
                 return sum + baseWithoutVAT;
               }
             }, 0);
-            
+
             // Calculate tax
             const totalTax = data.rowEntries.reduce((sum: number, item: any) => {
               const baseAmount = (item.quantity || 0) * (item.price || 0);
               const taxRate = item.taxRate || 0;
-              
+
               if (pricesExcludeTax) {
                 return sum + (baseAmount * taxRate) / 100;
               } else {
@@ -249,7 +251,7 @@ export const Invoices: CollectionConfig = {
                 return sum + vatAmount;
               }
             }, 0);
-            
+
             const discount = data?.discountTotal || 0;
             return subtotal + totalTax - discount;
           },
@@ -261,6 +263,7 @@ export const Invoices: CollectionConfig = {
       type: "relationship",
       relationTo: "users",
       required: true,
+      index: true,
       admin: {
         readOnly: true,
       },

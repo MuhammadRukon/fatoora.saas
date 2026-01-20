@@ -59,6 +59,7 @@ export const Accounts: CollectionConfig = {
       type: "relationship",
       relationTo: "users",
       required: true,
+      index: true,
       admin: {
         readOnly: true,
       },

@@ -16,19 +16,18 @@ export default async function CompanyInfoPage() {
 
   return (
     <>
-    <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
-    <div className="max-w-4xl mx-auto">
-    
-      <CompanyInfoForm
-        initialData={{
-          companyName: user?.companyName || "",
-          country: user?.country || "",
-          taxRegNum: user?.taxRegNum || "",
-          phone: user?.phone || "",
-          companyLogo: companyLogo,
-        }}
-      />
-    </div>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
+      <div className="max-w-4xl mx-auto">
+        <CompanyInfoForm
+          initialData={{
+            companyName: user?.companyName || "",
+            country: user?.country || "",
+            taxRegNum: user?.taxRegNum || "",
+            phone: user?.phone || "",
+            companyLogo: companyLogo,
+          }}
+        />
+      </div>
     </>
   );
 }

@@ -10,3 +10,11 @@ export function capitalize(word: string): string {
   const rest = word.slice(1);
   return firstLetter + rest;
 }
+
+export function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}

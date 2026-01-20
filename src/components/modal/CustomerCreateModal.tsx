@@ -62,7 +62,12 @@ export function CustomerCreateModal({
   const [error, setError] = useState("");
 
   const handleCreateCustomer = async () => {
-    console.log("handleCreateCustomer called with:", { name, taxRegNum, country, vatTreatment });
+    console.log("handleCreateCustomer called with:", {
+      name,
+      taxRegNum,
+      country,
+      vatTreatment,
+    });
 
     if (!name.trim()) {
       setError("Customer name is required");
@@ -156,7 +161,6 @@ export function CustomerCreateModal({
               />
             </div>
 
-            
             <div className="grid gap-3">
               <Label htmlFor="vat-treatment">VAT Treatment*</Label>
               <Combobox
@@ -192,7 +196,6 @@ export function CustomerCreateModal({
                 isSearchEnabled={true}
               />
             </div>
-
 
             {error && <p className="text-sm text-red-500">{error}</p>}
           </div>

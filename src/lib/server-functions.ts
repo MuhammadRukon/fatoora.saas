@@ -1,5 +1,6 @@
 "use server";
 
+import { cache } from "react";
 import { payload } from "./payload";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -82,14 +83,13 @@ export async function logout() {
   redirect("/login");
 }
 
-export async function getCurrentUser() {
+// multiple components call it, so we need to cache it
+export const getCurrentUser = cache(async () => {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("payload-token");
 
-    if (!token) {
-      return null;
-    }
+    if (!token) return null;
 
     const headersList = await headers();
 
@@ -102,7 +102,7 @@ export async function getCurrentUser() {
     console.error(error);
     return null;
   }
-}
+});
 
 export async function getCustomers() {
   try {

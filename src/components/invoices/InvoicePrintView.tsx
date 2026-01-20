@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
 
 interface RowEntry {
   description: string;
@@ -52,16 +51,6 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
   const [isReady, setIsReady] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
   const [actionTriggered, setActionTriggered] = useState(false);
-  const [returnUrl, setReturnUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const url = urlParams.get("return");
-      const storedUrl = sessionStorage.getItem("invoiceReturnUrl");
-      setReturnUrl(url ? decodeURIComponent(url) : storedUrl || `/invoices/${invoiceId}`);
-    }
-  }, [invoiceId]);
 
   useEffect(() => {
     fetchInvoice();
@@ -122,11 +111,11 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
       setActionTriggered(true);
 
       const redirectBack = () => {
-        const urlToReturn = returnUrl 
-          ? decodeURIComponent(returnUrl) 
-          : sessionStorage.getItem("invoiceReturnUrl") 
-          ? sessionStorage.getItem("invoiceReturnUrl") 
-          : `/invoices/${invoiceId}`;
+        const urlToReturn = returnUrl
+          ? decodeURIComponent(returnUrl)
+          : sessionStorage.getItem("invoiceReturnUrl")
+            ? sessionStorage.getItem("invoiceReturnUrl")
+            : `/invoices/${invoiceId}`;
 
         setTimeout(() => {
           try {
@@ -138,7 +127,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               // If same window or opener blocked, redirect this window
               window.location.href = urlToReturn || "";
             }
-          } catch {
+          } catch (error) {
             // If cross-origin or blocked, just close the window
             // User will remain on their original page
             window.close();
@@ -150,16 +139,16 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         // Wait a bit more to ensure everything is rendered
         setTimeout(() => {
           window.print();
-          
+
           // Handle print dialog close/cancel
           const handleAfterPrint = () => {
             redirectBack();
             window.removeEventListener("afterprint", handleAfterPrint);
           };
-          
+
           // Modern browsers
           window.addEventListener("afterprint", handleAfterPrint);
-          
+
           // Fallback for older browsers - check if print dialog is still open
           // This is a workaround since afterprint might not fire in all cases
           setTimeout(() => {
@@ -187,7 +176,8 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
                   jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
                 };
 
-                html2pdf.default()
+                html2pdf
+                  .default()
                   .set(opt as any)
                   .from(element)
                   .save()
@@ -210,7 +200,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         }, 500);
       }
     }
-  }, [isReady, invoice, actionTriggered, invoiceId]);
+  }, [isReady, invoice, actionTriggered]);
 
   const fetchInvoice = async () => {
     setIsLoading(true);
@@ -265,61 +255,10 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
     );
   }
 
-  const handleRedirectBack = () => {
-    const urlToReturn = returnUrl || `/invoices/${invoiceId}`;
-    try {
-      if (window.opener && !window.opener.closed) {
-        window.opener.location.href = urlToReturn;
-        window.close();
-      } else {
-        window.location.href = urlToReturn || "";
-      }
-    } catch {
-      window.location.href = urlToReturn || "";
-    }
-  };
-
   return (
-    <>
-      {/* Redirect Back Button - Hidden when printing */}
-      <div className="no-print" style={{
-        position: "fixed",
-        top: "20px",
-        left: "20px",
-        zIndex: 1000,
-      }}>
-        <button
-          onClick={handleRedirectBack}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 16px",
-            backgroundColor: "#111827",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "6px",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: "pointer",
-            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-            transition: "background-color 0.2s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#1f2937";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#111827";
-          }}
-        >
-          <ArrowLeft style={{ width: "16px", height: "16px" }} />
-          Back to Invoice Details
-        </button>
-      </div>
-
-      <div className="invoice-container" ref={printRef}>
-        {/* Header Section */}
-        <div className="invoice-header">
+    <div className="invoice-container" ref={printRef}>
+      {/* Header Section */}
+      <div className="invoice-header">
         {/* Invoice Title and Details */}
         <div>
           <h1 className="invoice-title">Invoice</h1>
@@ -335,9 +274,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
             <div>
               <div className="invoice-detail-label">Customer</div>
               <div className="invoice-detail-value">
-                {typeof invoice.customer === "object"
-                  ? invoice.customer.name
-                  : "Unknown"}
+                {typeof invoice.customer === "object" ? invoice.customer.name : "Unknown"}
               </div>
             </div>
             <div>
@@ -369,18 +306,12 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
             )}
           </div>
           <div>
-            <p className="company-name">
-              {userData.companyName || "Company Name"}
-            </p>
-            {userData.country && (
-              <p className="company-detail">{userData.country}</p>
-            )}
+            <p className="company-name">{userData.companyName || "Company Name"}</p>
+            {userData.country && <p className="company-detail">{userData.country}</p>}
             {userData.taxRegNum && (
               <p className="company-detail">Tax Reg: {userData.taxRegNum}</p>
             )}
-            {userData.phone && (
-              <p className="company-detail">{userData.phone}</p>
-            )}
+            {userData.phone && <p className="company-detail">{userData.phone}</p>}
           </div>
         </div>
       </div>
@@ -473,8 +404,6 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           </div>
         </div>
       </div>
-      </div>
-    </>
+    </div>
   );
 }
-

@@ -28,6 +28,23 @@ export type ContainerProps = {
   children: React.ReactNode;
 };
 
+export type UserData = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  companyName?: string | null;
+  country?: string | null;
+  taxRegNum?: string | null;
+  phone?: string | null;
+  photoUrl?: string | null;
+  companyLogo?: {
+    id: string;
+    url: string;
+    alt: string;
+  } | null;
+};
+
 export async function Container({ children }: ContainerProps) {
   const user = await getCurrentUser();
 
@@ -71,7 +88,9 @@ export async function Container({ children }: ContainerProps) {
                   {item.items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <Link href={item.url}>{item.title}</Link>
+                        <Link prefetch={true} href={item.url}>
+                          {item.title}
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
