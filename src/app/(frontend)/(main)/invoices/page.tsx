@@ -94,7 +94,7 @@ export default async function InvoicesList() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex gap-2 justify-end">
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/invoices/${invoice.id}`}>View</Link>
+                        <Link prefetch href={`/invoices/${invoice.id}`}>View</Link>
                       </Button>
                     </div>
                   </td>

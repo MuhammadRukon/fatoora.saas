@@ -142,6 +142,7 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
                   src={logoPreview}
                   alt="Company logo"
                   fill
+                  sizes="(max-width: 768px) 100px, 150px"
                   className="object-contain"
                 />
                 <button

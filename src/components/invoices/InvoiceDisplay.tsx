@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 
 interface RowEntry {
@@ -48,14 +46,6 @@ interface InvoiceDisplayProps {
 }
 
 export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
-  const formatDateLong = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   const calculateLineTotal = (item: RowEntry) => {
     const baseAmount = item.quantity * item.price;
     // If prices exclude tax, add VAT to get total
@@ -88,7 +78,7 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
                   Date
                 </Label>
                 <p className="text-sm font-semibold text-gray-900 mt-1">
-                  {formatDateLong(invoice.date)}
+                  {formatDate(invoice.date)}
                 </p>
               </div>
               <div>
@@ -106,7 +96,7 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
                   Due Date
                 </Label>
                 <p className="text-sm font-semibold text-gray-900 mt-1">
-                  {formatDateLong(invoice.dueDate)}
+                  {formatDate(invoice.dueDate)}
                 </p>
               </div>
             </div>

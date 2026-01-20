@@ -399,6 +399,7 @@ export function Invoice({ userData }: InvoiceProps) {
                   src={userData.companyLogo.url}
                   alt={userData.companyLogo.alt || "Company logo"}
                   fill
+                  sizes="(max-width: 768px) 100px, 150px"
                   className="object-contain"
                 />
               ) : (

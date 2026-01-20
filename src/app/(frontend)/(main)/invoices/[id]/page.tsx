@@ -2,7 +2,6 @@ import { InvoiceDisplay } from "@/components/invoices/InvoiceDisplay";
 import { InvoiceActions } from "@/components/invoices/InvoiceActions";
 import { getCurrentUser } from "@/lib/server-functions";
 import { payload } from "@/lib/payload";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ export default async function InvoiceDetailsPage({
 }) {
   const { id } = await params;
   const user = await getCurrentUser();
-  const headersList = await headers();
 
   if (!user) {
     notFound();
@@ -25,10 +23,9 @@ export default async function InvoiceDetailsPage({
   const invoiceResult = await payload.findByID({
     collection: "invoices",
     id,
-    req: {
-      headers: headersList,
-    } as any,
-    depth: 1, // Populate relationships (customer)
+    depth: 1,
+    overrideAccess:false,
+    user: user,
     select: {
       id: true,
       invoiceNumber: true,
