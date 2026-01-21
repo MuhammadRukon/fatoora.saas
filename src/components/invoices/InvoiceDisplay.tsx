@@ -14,9 +14,18 @@ interface RowEntry {
 interface Invoice {
   id: string;
   invoiceNumber: string;
+  invoiceType: "standard" | "simplified";
   customer: {
     id: string;
     name: string;
+    address?: {
+      buildingNumber?: string;
+      streetName?: string;
+      district?: string;
+      city?: string;
+      postalCode?: string;
+      additionalNumber?: string;
+    };
   };
   date: string;
   dueDate: string;
@@ -31,8 +40,17 @@ interface Invoice {
 
 interface UserData {
   companyName?: string;
-  country?: string;
   vatNumber?: string;
+  registrationNumber?: string;
+  address?: {
+    buildingNumber?: string;
+    streetName?: string;
+    district?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    additionalNumber?: string;
+  };
   phone?: string;
   companyLogo?: {
     url: string;
@@ -56,6 +74,29 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
     return baseAmount;
   };
 
+  const formatAddress = (address?: {
+    buildingNumber?: string;
+    streetName?: string;
+    district?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    additionalNumber?: string;
+  }) => {
+    if (!address) return "N/A";
+    
+    const parts = [
+      address.buildingNumber,
+      address.streetName,
+      address.district,
+      address.city,
+      address.postalCode,
+      address.country,
+    ].filter(Boolean);
+    
+    return parts.length > 0 ? parts.join(", ") : "N/A";
+  };
+
   return (
     <Card className="p-6 md:p-8">
       <div className="space-y-8">
@@ -64,6 +105,11 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
           {/* Invoice Title and Details */}
           <div className="space-y-1">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Invoice</h1>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
+              {invoice.invoiceType === "standard"
+                ? "Standard Tax Invoice (B2B/B2G)"
+                : "Simplified Tax Invoice (B2C)"}
+            </p>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
               <div>
                 <Label className="text-xs text-gray-500 uppercase tracking-wide">
@@ -120,7 +166,11 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
               <p className="font-semibold text-gray-900">
                 {userData.companyName || "Company Name"}
               </p>
-              {userData.country && <p className="text-gray-600">{userData.country}</p>}
+              {userData.address && (
+                <p className="text-gray-600 text-xs mt-1">
+                  {formatAddress(userData.address)}
+                </p>
+              )}
               {userData.vatNumber && (
                 <p className="text-gray-600 text-xs mt-1">
                   Tax Reg: {userData.vatNumber}

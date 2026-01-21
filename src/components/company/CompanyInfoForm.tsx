@@ -12,16 +12,34 @@ import { Upload, X } from "lucide-react";
 
 interface CompanyInfoData {
   companyName: string;
-  country: string;
   vatNumber: string;
+  registrationNumber: string;
+  address: {
+    buildingNumber: string;
+    streetName: string;
+    district: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    additionalNumber: string;
+  };
   phone: string;
 }
 
 interface CompanyInfoFormProps {
   initialData?: {
     companyName?: string;
-    country?: string;
     vatNumber?: string;
+    registrationNumber?: string;
+    address?: {
+      buildingNumber?: string;
+      streetName?: string;
+      district?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+      additionalNumber?: string;
+    };
     phone?: string;
     companyLogo?: {
       id: string;
@@ -46,8 +64,17 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
   const form = useForm<CompanyInfoData>({
     defaultValues: {
       companyName: initialData?.companyName || "",
-      country: initialData?.country || "",
       vatNumber: initialData?.vatNumber || "",
+      registrationNumber: initialData?.registrationNumber || "",
+      address: {
+        buildingNumber: initialData?.address?.buildingNumber || "",
+        streetName: initialData?.address?.streetName || "",
+        district: initialData?.address?.district || "",
+        city: initialData?.address?.city || "",
+        postalCode: initialData?.address?.postalCode || "",
+        country: initialData?.address?.country || "Saudi Arabia",
+        additionalNumber: initialData?.address?.additionalNumber || "",
+      },
       phone: initialData?.phone || "",
     },
   });
@@ -202,50 +229,148 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="companyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company Name</FormLabel>
-                <Input {...field} placeholder="Enter company name" />
-              </FormItem>
-            )}
-          />
+        {/* Company Information */}
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <Input {...field} placeholder="Enter company name" />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
-                <Input {...field} placeholder="Enter country" />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <Input {...field} placeholder="Enter phone number" type="tel" />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="vatNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tax Registration Number</FormLabel>
-                <Input {...field} placeholder="Enter tax registration number" />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="vatNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>VAT Registration Number</FormLabel>
+                    <Input {...field} placeholder="Enter 15-digit VAT number" />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <Input {...field} placeholder="Enter phone number" type="tel" />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="registrationNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Registration Number</FormLabel>
+                    <Input {...field} placeholder="Enter 10-digit CR number" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Company Address - ZATCA Required */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              Company Address
+              <span className="text-sm font-normal text-red-600 ml-2">
+                (ZATCA Required)
+              </span>
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Complete address must be included on all invoices per Article 53, VAT Implementing
+              Regulations
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="address.buildingNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Building Number</FormLabel>
+                    <Input {...field} placeholder="e.g., 1234" maxLength={4} />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.streetName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Name</FormLabel>
+                    <Input {...field} placeholder="Enter street name" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.district"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>District</FormLabel>
+                    <Input {...field} placeholder="Enter district/neighborhood" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <Input {...field} placeholder="Enter city" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.postalCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postal Code</FormLabel>
+                    <Input {...field} placeholder="e.g., 12345" maxLength={5} />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <Input {...field} placeholder="Saudi Arabia" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.additionalNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Additional Number (Optional)</FormLabel>
+                    <Input {...field} placeholder="e.g., 5678" maxLength={4} />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-3">

@@ -131,8 +131,47 @@ export interface User {
   lastName: string;
   photoUrl?: string | null;
   companyName?: string | null;
+  /**
+   * 15-digit VAT registration number (e.g., 300000000000003)
+   */
   vatNumber?: string | null;
-  country?: string | null;
+  /**
+   * Commercial Registration (CR) number issued by Ministry of Commerce (ZATCA Phase 2 requirement)
+   */
+  registrationNumber?: string | null;
+  /**
+   * ZATCA Phase 1 Requirement (Article 53): Complete address must be included on all invoices
+   */
+  address?: {
+    /**
+     * Building number (4 digits, e.g., 1234)
+     */
+    buildingNumber?: string | null;
+    /**
+     * Street name in Arabic or English
+     */
+    streetName?: string | null;
+    /**
+     * District/Neighborhood name
+     */
+    district?: string | null;
+    /**
+     * City name
+     */
+    city?: string | null;
+    /**
+     * 5-digit postal code (e.g., 12345)
+     */
+    postalCode?: string | null;
+    /**
+     * Country name (default: Saudi Arabia)
+     */
+    country?: string | null;
+    /**
+     * Additional number (4 digits, optional)
+     */
+    additionalNumber?: string | null;
+  };
   phone?: string | null;
   companyLogo?: (string | null) | Media;
   role: 'admin' | 'user';
@@ -210,6 +249,10 @@ export interface Invoice {
    * Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled
    */
   status: 'active' | 'void' | 'cancelled';
+  /**
+   * ZATCA Phase 1 Requirement (Article 53, VAT Implementing Regulations): Standard for VAT-registered customers (B2B/B2G), Simplified for non-registered customers (B2C)
+   */
+  invoiceType: 'standard' | 'simplified';
   customer: string | Customer;
   date: string;
   dueDate: string;
@@ -223,11 +266,10 @@ export interface Invoice {
   }[];
   pricesExcludeTax?: boolean | null;
   discountTotal?: number | null;
-  includeQRCode?: boolean | null;
   /**
-   * QR code data URL (base64 image)
+   * QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for Simplified invoices, optional for Standard invoices
    */
-  qrCodeData?: string | null;
+  qrCodeData: string;
   subtotal?: number | null;
   totalTax?: number | null;
   total?: number | null;
@@ -276,6 +318,35 @@ export interface Customer {
    * Customer's VAT registration status in Saudi Arabia
    */
   vatTreatment: 'not_registered' | 'registered';
+  /**
+   * ZATCA Phase 1 Requirement (Article 53): Address required for B2B invoices (Standard Tax Invoices)
+   */
+  address?: {
+    /**
+     * Building number (4 digits, e.g., 1234)
+     */
+    buildingNumber?: string | null;
+    /**
+     * Street name in Arabic or English
+     */
+    streetName?: string | null;
+    /**
+     * District/Neighborhood name
+     */
+    district?: string | null;
+    /**
+     * City name
+     */
+    city?: string | null;
+    /**
+     * 5-digit postal code (e.g., 12345)
+     */
+    postalCode?: string | null;
+    /**
+     * Additional number (4 digits, optional)
+     */
+    additionalNumber?: string | null;
+  };
   createdBy: string | User;
   updatedAt: string;
   createdAt: string;
@@ -387,7 +458,18 @@ export interface UsersSelect<T extends boolean = true> {
   photoUrl?: T;
   companyName?: T;
   vatNumber?: T;
-  country?: T;
+  registrationNumber?: T;
+  address?:
+    | T
+    | {
+        buildingNumber?: T;
+        streetName?: T;
+        district?: T;
+        city?: T;
+        postalCode?: T;
+        country?: T;
+        additionalNumber?: T;
+      };
   phone?: T;
   companyLogo?: T;
   role?: T;
@@ -415,6 +497,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface InvoicesSelect<T extends boolean = true> {
   invoiceNumber?: T;
   status?: T;
+  invoiceType?: T;
   customer?: T;
   date?: T;
   dueDate?: T;
@@ -430,7 +513,6 @@ export interface InvoicesSelect<T extends boolean = true> {
       };
   pricesExcludeTax?: T;
   discountTotal?: T;
-  includeQRCode?: T;
   qrCodeData?: T;
   subtotal?: T;
   totalTax?: T;
@@ -448,6 +530,16 @@ export interface CustomersSelect<T extends boolean = true> {
   vatNumber?: T;
   country?: T;
   vatTreatment?: T;
+  address?:
+    | T
+    | {
+        buildingNumber?: T;
+        streetName?: T;
+        district?: T;
+        city?: T;
+        postalCode?: T;
+        additionalNumber?: T;
+      };
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;

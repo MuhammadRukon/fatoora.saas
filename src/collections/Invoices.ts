@@ -71,6 +71,26 @@ export const Invoices: CollectionConfig = {
       },
     },
     {
+      name: "invoiceType",
+      type: "select",
+      required: true,
+      defaultValue: "simplified",
+      options: [
+        {
+          label: "Standard Tax Invoice (B2B/B2G)",
+          value: "standard",
+        },
+        {
+          label: "Simplified Tax Invoice (B2C)",
+          value: "simplified",
+        },
+      ],
+      admin: {
+        description:
+          "ZATCA Phase 1 Requirement (Article 53, VAT Implementing Regulations): Standard for VAT-registered customers (B2B/B2G), Simplified for non-registered customers (B2C)",
+      },
+    },
+    {
       name: "customer",
       type: "relationship",
       relationTo: "customers" as any,
@@ -147,15 +167,19 @@ export const Invoices: CollectionConfig = {
       min: 0,
     },
     {
-      name: "includeQRCode",
-      type: "checkbox",
-      defaultValue: false,
-    },
-    {
       name: "qrCodeData",
       type: "textarea",
+      required: true,
       admin: {
-        description: "QR code data URL (base64 image)",
+        description:
+          "QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for Simplified invoices, optional for Standard invoices",
+      },
+      validate: (value, { data }) => {
+        // QR Code is mandatory for simplified invoices (B2C)
+        if (data.invoiceType === "simplified" && !value) {
+          return "QR Code is mandatory for Simplified Tax Invoices (B2C)";
+        }
+        return true;
       },
     },
     {

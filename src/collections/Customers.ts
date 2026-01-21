@@ -107,6 +107,65 @@ export const Customers: CollectionConfig = {
       },
     },
     {
+      name: "address",
+      type: "group",
+      label: "Customer Address",
+      admin: {
+        description:
+          "ZATCA Phase 1 Requirement (Article 53): Address required for B2B invoices (Standard Tax Invoices)",
+      },
+      fields: [
+        {
+          name: "buildingNumber",
+          type: "text",
+          label: "Building Number",
+          admin: {
+            description: "Building number (4 digits, e.g., 1234)",
+          },
+        },
+        {
+          name: "streetName",
+          type: "text",
+          label: "Street Name",
+          admin: {
+            description: "Street name in Arabic or English",
+          },
+        },
+        {
+          name: "district",
+          type: "text",
+          label: "District",
+          admin: {
+            description: "District/Neighborhood name",
+          },
+        },
+        {
+          name: "city",
+          type: "text",
+          label: "City",
+          admin: {
+            description: "City name",
+          },
+        },
+        {
+          name: "postalCode",
+          type: "text",
+          label: "Postal Code",
+          admin: {
+            description: "5-digit postal code (e.g., 12345)",
+          },
+        },
+        {
+          name: "additionalNumber",
+          type: "text",
+          label: "Additional Number",
+          admin: {
+            description: "Additional number (4 digits, optional)",
+          },
+        },
+      ],
+    },
+    {
       name: "createdBy",
       type: "relationship",
       relationTo: "users",

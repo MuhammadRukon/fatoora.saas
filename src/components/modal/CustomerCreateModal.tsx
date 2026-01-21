@@ -10,9 +10,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Combobox } from "@/components/ui/combo-box";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { createCustomer } from "@/lib/server-functions";
 
 const ARAB_COUNTRIES = [
@@ -45,6 +46,21 @@ const VAT_TREATMENT_OPTIONS = [
   { label: "VAT Registered in KSA", value: "registered" },
 ];
 
+interface CustomerFormData {
+  name: string;
+  vatNumber?: string;
+  country?: string;
+  vatTreatment: string;
+  address: {
+    buildingNumber?: string;
+    streetName?: string;
+    district?: string;
+    city?: string;
+    postalCode?: string;
+    additionalNumber?: string;
+  };
+}
+
 export function CustomerCreateModal({
   open,
   setOpen,
@@ -54,53 +70,51 @@ export function CustomerCreateModal({
   setOpen: (open: boolean) => void;
   onCustomerCreated?: () => void;
 }) {
-  const [name, setName] = useState("");
-  const [vatNumber, setvatNumber] = useState("");
-  const [country, setCountry] = useState("");
-  const [vatTreatment, setVatTreatment] = useState("not_registered");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const handleCreateCustomer = async () => {
-    console.log("handleCreateCustomer called with:", {
-      name,
-      vatNumber,
-      country,
-      vatTreatment,
-    });
+  const form = useForm<CustomerFormData>({
+    defaultValues: {
+      name: "",
+      vatNumber: "",
+      country: "",
+      vatTreatment: "not_registered",
+      address: {
+        buildingNumber: "",
+        streetName: "",
+        district: "",
+        city: "",
+        postalCode: "",
+        additionalNumber: "",
+      },
+    },
+  });
 
-    if (!name.trim()) {
-      setError("Customer name is required");
-      return;
-    }
-
-    if (!vatTreatment) {
-      setError("VAT treatment is required");
-      return;
-    }
-
+  const onSubmit = async (data: CustomerFormData) => {
     setIsSubmitting(true);
     setError("");
 
     try {
-      console.log("Calling createCustomer...");
       const customerData = {
-        name: name.trim(),
-        vatNumber: vatNumber.trim() || undefined,
-        country: country || undefined,
-        vatTreatment,
+        name: data.name.trim(),
+        vatNumber: data.vatNumber?.trim() || undefined,
+        country: data.country || undefined,
+        vatTreatment: data.vatTreatment,
+        address: {
+          buildingNumber: data.address.buildingNumber?.trim() || undefined,
+          streetName: data.address.streetName?.trim() || undefined,
+          district: data.address.district?.trim() || undefined,
+          city: data.address.city?.trim() || undefined,
+          postalCode: data.address.postalCode?.trim() || undefined,
+          additionalNumber: data.address.additionalNumber?.trim() || undefined,
+        },
       };
+
       const result = await createCustomer(customerData);
-      console.log("Result:", result);
 
       if (result.success) {
-        console.log("Customer created successfully:", result.customer);
-
         // Reset form and close modal
-        setName("");
-        setvatNumber("");
-        setCountry("");
-        setVatTreatment("not_registered");
+        form.reset();
         setOpen(false);
 
         // Notify parent component to refresh customer list
@@ -108,7 +122,6 @@ export function CustomerCreateModal({
           onCustomerCreated();
         }
       } else {
-        console.error("Failed to create customer:", result.error);
         setError(result.error || "Failed to create customer. Please try again.");
       }
     } catch (error) {
@@ -119,19 +132,9 @@ export function CustomerCreateModal({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Form submitted");
-    await handleCreateCustomer();
-  };
-
   const handleClose = () => {
     if (!isSubmitting) {
-      setName("");
-      setvatNumber("");
-      setCountry("");
-      setVatTreatment("not_registered");
+      form.reset();
       setError("");
       setOpen(false);
     }
@@ -139,80 +142,221 @@ export function CustomerCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Create New Customer</DialogTitle>
-            <DialogDescription>
-              Add a new customer to your list. Click save when you&apos;re done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
-            <div className="grid gap-3">
-              <Label htmlFor="customer-name">Customer / Company Name*</Label>
-              <Input
-                id="customer-name"
+      <DialogContent className="sm:max-w-[600px]">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Create New Customer</DialogTitle>
+              <DialogDescription>
+                Add a new customer to your list. Click save when you&apos;re done.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4 max-h-[85vh]">
+              <FormField
+                control={form.control}
                 name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter customer / company name"
-                disabled={isSubmitting}
-                autoFocus
+                rules={{ required: "Customer name is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Customer / Company Name*</FormLabel>
+                    <Input
+                      {...field}
+                      placeholder="Enter customer / company name"
+                      disabled={isSubmitting}
+                      autoFocus
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="grid gap-3">
-              <Label htmlFor="vat-treatment">VAT Treatment*</Label>
-              <Combobox
-                placeholder="Select VAT treatment"
-                options={VAT_TREATMENT_OPTIONS}
-                value={vatTreatment}
-                onChange={setVatTreatment}
-                showCreateButton={false}
-                isSearchEnabled={false}
+              <FormField
+                control={form.control}
+                name="vatTreatment"
+                rules={{ required: "VAT treatment is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>VAT Treatment*</FormLabel>
+                    <Combobox
+                      placeholder="Select VAT treatment"
+                      options={VAT_TREATMENT_OPTIONS}
+                      value={field.value}
+                      onChange={field.onChange}
+                      showCreateButton={false}
+                      isSearchEnabled={false}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="grid gap-3">
-              <Label htmlFor="tax-reg-num">Tax Registration Number</Label>
-              <Input
-                id="tax-reg-num"
+              <FormField
+                control={form.control}
                 name="vatNumber"
-                value={vatNumber}
-                onChange={(e) => setvatNumber(e.target.value)}
-                placeholder="Enter tax registration number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tax Registration Number</FormLabel>
+                    <Input
+                      {...field}
+                      placeholder="Enter tax registration number"
+                      disabled={isSubmitting}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <Combobox
+                      placeholder="Select country"
+                      options={ARAB_COUNTRIES}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      showCreateButton={false}
+                      isSearchEnabled={true}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Address Section */}
+              <div className="pt-4 border-t">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  Customer Address
+                  <span className="text-xs font-normal text-gray-500 ml-2">
+                    (Required for B2B invoices)
+                  </span>
+                </h3>
+                
+                <div className="grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <FormField
+                      control={form.control}
+                      name="address.buildingNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Building Number</FormLabel>
+                          <Input
+                            {...field}
+                            placeholder="e.g., 1234"
+                            maxLength={4}
+                            disabled={isSubmitting}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.postalCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Postal Code</FormLabel>
+                          <Input
+                            {...field}
+                            placeholder="e.g., 12345"
+                            maxLength={5}
+                            disabled={isSubmitting}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="address.streetName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Street Name</FormLabel>
+                        <Input
+                          {...field}
+                          placeholder="Enter street name"
+                          disabled={isSubmitting}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <FormField
+                      control={form.control}
+                      name="address.district"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>District</FormLabel>
+                          <Input
+                            {...field}
+                            placeholder="Enter district"
+                            disabled={isSubmitting}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <Input
+                            {...field}
+                            placeholder="Enter city"
+                            disabled={isSubmitting}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="address.additionalNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Additional Number (Optional)</FormLabel>
+                        <Input
+                          {...field}
+                          placeholder="e.g., 5678"
+                          maxLength={4}
+                          disabled={isSubmitting}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {error && <p className="text-sm text-red-500">{error}</p>}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                type="button"
                 disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="grid gap-3">
-              <Label htmlFor="country">Country</Label>
-              <Combobox
-                placeholder="Select country"
-                options={ARAB_COUNTRIES}
-                value={country}
-                onChange={setCountry}
-                showCreateButton={false}
-                isSearchEnabled={true}
-              />
-            </div>
-
-            {error && <p className="text-sm text-red-500">{error}</p>}
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <Button type="button" disabled={isSubmitting} onClick={handleCreateCustomer}>
-              {isSubmitting ? "Creating..." : "Create Customer"}
-            </Button>
-          </DialogFooter>
-        </form>
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Customer"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

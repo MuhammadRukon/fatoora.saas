@@ -130,7 +130,6 @@
 ::-webkit-scrollbar {
   display: none;
 }
-
 /* Print Styles */
 @media print {
   /* Hide elements with no-print class */

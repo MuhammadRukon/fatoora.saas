@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 
@@ -15,9 +15,18 @@ interface RowEntry {
 interface Invoice {
   id: string;
   invoiceNumber: string;
+  invoiceType: "standard" | "simplified";
   customer: {
     id: string;
     name: string;
+    address?: {
+      buildingNumber?: string;
+      streetName?: string;
+      district?: string;
+      city?: string;
+      postalCode?: string;
+      additionalNumber?: string;
+    };
   };
   date: string;
   dueDate: string;
@@ -32,8 +41,17 @@ interface Invoice {
 
 interface UserData {
   companyName?: string;
-  country?: string;
   vatNumber?: string;
+  registrationNumber?: string;
+  address?: {
+    buildingNumber?: string;
+    streetName?: string;
+    district?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    additionalNumber?: string;
+  };
   phone?: string;
   companyLogo?: {
     url: string;
@@ -53,10 +71,26 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
   const printRef = useRef<HTMLDivElement>(null);
   const [actionTriggered, setActionTriggered] = useState(false);
 
+  const fetchInvoice = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/invoices/${invoiceId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setInvoice(data);
+      } else {
+        console.error("Failed to fetch invoice");
+      }
+    } catch (error) {
+      console.error("Error fetching invoice:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [invoiceId]);
+
   useEffect(() => {
     fetchInvoice();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invoiceId]);
+  }, [fetchInvoice]);
 
   // Wait for images to load
   useEffect(() => {
@@ -202,24 +236,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         }, 500);
       }
     }
-  }, [isReady, invoice, actionTriggered]);
-
-  const fetchInvoice = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/invoices/${invoiceId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setInvoice(data);
-      } else {
-        console.error("Failed to fetch invoice");
-      }
-    } catch (error) {
-      console.error("Error fetching invoice:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [isReady, invoice, actionTriggered, invoiceId]);
 
   const calculateLineTotal = (item: RowEntry) => {
     const baseAmount = item.quantity * item.price;
@@ -227,6 +244,29 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
       return baseAmount + (baseAmount * item.taxRate) / 100;
     }
     return baseAmount;
+  };
+
+  const formatAddress = (address?: {
+    buildingNumber?: string;
+    streetName?: string;
+    district?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    additionalNumber?: string;
+  }) => {
+    if (!address) return "N/A";
+    
+    const parts = [
+      address.buildingNumber,
+      address.streetName,
+      address.district,
+      address.city,
+      address.postalCode,
+      address.country,
+    ].filter(Boolean);
+    
+    return parts.length > 0 ? parts.join(", ") : "N/A";
   };
 
   if (isLoading) {
@@ -255,7 +295,9 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
       <div className="invoice-header">
         <div className="company-details">
             <p className="company-name">{userData.companyName || "Company Name"}</p>
-            {userData.country && <p className="company-detail">{userData.country}</p>}
+            {userData.address && (
+              <p className="company-detail">{formatAddress(userData.address)}</p>
+            )}
             {userData.vatNumber && (
               <p className="company-detail"><span> Vat Number: </span> {userData.vatNumber}</p>
             )}
@@ -282,7 +324,9 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           {/* arabic */}
           <div style={{textAlign: "right"}} className="company-details">
             <p className="company-name">{userData.companyName || "Company Name"}</p>
-            {userData.country && <p className="company-detail">{userData.country}</p>}
+            {userData.address && (
+              <p className="company-detail">{formatAddress(userData.address)}</p>
+            )}
             {userData.vatNumber && (
               <p className="company-detail"><span> رقم ضريبة القيمة المضافة: </span> {userData.vatNumber}</p>
             )}
@@ -293,7 +337,17 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
 
           {/* Invoice Title and Details */}
         <div className="invoice-details">
-          <h1 className="invoice-title">Tax Invoice  <span>فاتورة ضريبية</span></h1>
+          <h1 className="invoice-title">
+            {invoice.invoiceType === "standard"
+              ? "Tax Invoice"
+              : "Simplified Tax Invoice"}
+            {" "}
+            <span>
+              {invoice.invoiceType === "standard"
+                ? "فاتورة ضريبية"
+                : "فاتورة ضريبية مبسطة"}
+            </span>
+          </h1>
           <div>
             <div className="invoice-detail-row">
               <div className="invoice-detail-label" style={{ textAlign: "left" }}>Invoice Number</div>
@@ -321,7 +375,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
 
             <div className="invoice-detail-row">
               <div className="invoice-detail-label" style={{ textAlign: "left" }}>Address</div>
-              <div className="invoice-detail-value">{"invoice.customer.address"}</div>
+              <div className="invoice-detail-value">{formatAddress(invoice.customer.address)}</div>
               <div className="invoice-detail-label" style={{ textAlign: "right" }}>العنوان</div>
             </div>
           </div>

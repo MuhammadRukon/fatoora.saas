@@ -66,16 +66,94 @@ export const Users: CollectionConfig = {
       name: "vatNumber",
       type: "text",
       required: false,
+      label: "VAT Registration Number",
+      admin: {
+        description: "15-digit VAT registration number (e.g., 300000000000003)",
+      },
     },
     {
-      name: "country",
+      name: "registrationNumber",
       type: "text",
       required: false,
+      label: "Commercial Registration Number",
+      admin: {
+        description:
+          "Commercial Registration (CR) number issued by Ministry of Commerce (ZATCA Phase 2 requirement)",
+      },
+    },
+    {
+      name: "address",
+      type: "group",
+      label: "Company Address",
+      admin: {
+        description:
+          "ZATCA Phase 1 Requirement (Article 53): Complete address must be included on all invoices",
+      },
+      fields: [
+        {
+          name: "buildingNumber",
+          type: "text",
+          label: "Building Number",
+          admin: {
+            description: "Building number (4 digits, e.g., 1234)",
+          },
+        },
+        {
+          name: "streetName",
+          type: "text",
+          label: "Street Name",
+          admin: {
+            description: "Street name in Arabic or English",
+          },
+        },
+        {
+          name: "district",
+          type: "text",
+          label: "District",
+          admin: {
+            description: "District/Neighborhood name",
+          },
+        },
+        {
+          name: "city",
+          type: "text",
+          label: "City",
+          admin: {
+            description: "City name",
+          },
+        },
+        {
+          name: "postalCode",
+          type: "text",
+          label: "Postal Code",
+          admin: {
+            description: "5-digit postal code (e.g., 12345)",
+          },
+        },
+        {
+          name: "country",
+          type: "text",
+          label: "Country",
+          defaultValue: "Saudi Arabia",
+          admin: {
+            description: "Country name (default: Saudi Arabia)",
+          },
+        },
+        {
+          name: "additionalNumber",
+          type: "text",
+          label: "Additional Number",
+          admin: {
+            description: "Additional number (4 digits, optional)",
+          },
+        },
+      ],
     },
     {
       name: "phone",
       type: "text",
       required: false,
+      label: "Phone Number",
     },
     {
       name: "companyLogo",

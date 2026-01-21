@@ -21,8 +21,9 @@ export default async function CompanyInfoPage() {
         <CompanyInfoForm
           initialData={{
             companyName: user?.companyName || "",
-            country: user?.country || "",
             vatNumber: user?.vatNumber || "",
+            registrationNumber: user?.registrationNumber || "",
+            address: user?.address || undefined,
             phone: user?.phone || "",
             companyLogo: companyLogo,
           }}
