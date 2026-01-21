@@ -16,7 +16,7 @@ export async function login(email: string, password: string) {
     if (!result.token) {
       return { success: false, error: "Invalid credentials" };
     }
-    
+
     // Set cookie with optimal settings
     const cookieStore = await cookies();
     cookieStore.set("payload-token", result.token, {
@@ -30,8 +30,8 @@ export async function login(email: string, password: string) {
     return { success: true, user: result.user };
   } catch (error: any) {
     // Return user-friendly error messages
-    const errorMessage = error.message?.includes("credentials") 
-      ? "Invalid email or password" 
+    const errorMessage = error.message?.includes("credentials")
+      ? "Invalid email or password"
       : "Login failed. Please try again.";
     return { success: false, error: errorMessage };
   }
@@ -115,13 +115,13 @@ export const getCurrentUserCompanyData = cache(async () => {
     const { user } = await payload.auth({
       headers: headersList,
     });
-    
+
     if (!user) return null;
 
     const userData = await payload.findByID({
       collection: "users",
       id: user.id,
-      depth: 1, 
+      depth: 1,
       select: {
         companyName: true,
         vatNumber: true,
@@ -159,6 +159,85 @@ export async function getCustomers() {
   } catch (error: any) {
     console.error("Error fetching customers:", error);
     return { success: false, error: error.message || "Failed to fetch customers" };
+  }
+}
+
+export async function deleteCustomer(id: string) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { success: false, error: "Not authenticated" };
+  }
+  const customer = await payload.delete({
+    collection: "customers",
+    id,
+  });
+
+  if (!customer) {
+    return { success: false, error: "Customer not found" };
+  }
+  return { success: true, customer };
+}
+
+export async function updateCustomer(
+  id: string,
+  data: {
+    name: string;
+    vatNumber?: string;
+    country?: string;
+    vatTreatment: string;
+    address?: {
+      buildingNumber?: string;
+      streetName?: string;
+      district?: string;
+      city?: string;
+      postalCode?: string;
+      additionalNumber?: string;
+    };
+  }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const customer = await payload.update({
+      collection: "customers",
+      id,
+      data: {
+        name: data.name,
+        vatNumber: data.vatNumber,
+        country: data.country,
+        vatTreatment: data.vatTreatment,
+        address: data.address,
+      } as any,
+    });
+
+    return { success: true, customer };
+  } catch (error: any) {
+    console.error("Error updating customer:", error);
+    return { success: false, error: error.message || "Failed to update customer" };
+  }
+}
+
+export async function getCustomer(id: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const customer = await payload.findByID({
+      collection: "customers",
+      id,
+      overrideAccess: false,
+      user: user,
+    });
+
+    return { success: true, customer };
+  } catch (error: any) {
+    console.error("Error fetching customer:", error);
+    return { success: false, error: error.message || "Failed to fetch customer" };
   }
 }
 

@@ -4,13 +4,14 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { EllipsisVertical, LucideTrash2, Plus } from "lucide-react";
+import { EllipsisVertical, Eye, LucideTrash2, Plus } from "lucide-react";
 import { Combobox } from "../ui/combo-box";
 import { Label } from "../ui/label";
 import Image from "next/image";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CustomerCreateModal } from "../modal/CustomerCreateModal";
+import { CustomerViewUpdateModal } from "../modal/CustomerViewUpdateModal";
 import { AccountCreateModal } from "../modal/AccountCreateModal";
 import { getCustomers, getAccounts } from "@/lib/server-functions";
 import { generateInvoiceQRCode } from "@/lib/qr-code-generator";
@@ -47,7 +48,6 @@ interface Account {
   name: string;
 }
 
-
 export function Invoice({ user }: { user: UserData }) {
   const router = useRouter();
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -55,6 +55,7 @@ export function Invoice({ user }: { user: UserData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
+  const [openCustomerEditModal, setOpenCustomerEditModal] = useState(false);
   const [openAccountModal, setOpenAccountModal] = useState(false);
   const [qrCodeDataURL, setQrCodeDataURL] = useState<string | null>(null);
   const form = useForm<InvoiceData>({
@@ -174,7 +175,6 @@ export function Invoice({ user }: { user: UserData }) {
   const tax = calculateTax();
   const total = subtotal + tax - discountTotal;
 
-
   // Manual QR code generation
   const handleGenerateQRCode = async () => {
     // Validate required fields
@@ -267,7 +267,7 @@ export function Invoice({ user }: { user: UserData }) {
           pricesExcludeTax: true,
           discountTotal: 0,
         });
-        
+
         // Reset QR code
         setQrCodeDataURL(null);
 
@@ -302,17 +302,35 @@ export function Invoice({ user }: { user: UserData }) {
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Customer*</FormLabel>
-                    <Combobox
-                      {...field}
-                      placeholder={isLoading ? "Loading customers..." : "Select customer"}
-                      options={customers.map((customer) => ({
-                        label: customer.name,
-                        value: customer.id,
-                      }))}
-                      handleCreate={() => {
-                        setOpenCustomerModal(true);
-                      }}
-                    />
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <Combobox
+                          {...field}
+                          placeholder={
+                            isLoading ? "Loading customers..." : "Select customer"
+                          }
+                          options={customers.map((customer) => ({
+                            label: customer.name,
+                            value: customer.id,
+                          }))}
+                          handleCreate={() => {
+                            setOpenCustomerModal(true);
+                          }}
+                        />
+                      </div>
+                      {field.value && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          aria-label="View / Update customer"
+                          disabled={!field.value}
+                          onClick={() => setOpenCustomerEditModal(true)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                     {fieldState.error && (
                       <p className="text-sm text-red-500">{fieldState.error.message}</p>
                     )}
@@ -733,7 +751,8 @@ export function Invoice({ user }: { user: UserData }) {
                   onClick={handleGenerateQRCode}
                   className="w-full"
                 >
-                  Generate QR Code{invoiceType === "simplified" ? " (Required)" : " (Optional)"}
+                  Generate QR Code
+                  {invoiceType === "simplified" ? " (Required)" : " (Optional)"}
                 </Button>
               </div>
             )}
@@ -773,6 +792,12 @@ export function Invoice({ user }: { user: UserData }) {
           </Button>
         </div>
       </form>
+      <CustomerViewUpdateModal
+        open={openCustomerEditModal}
+        setOpen={setOpenCustomerEditModal}
+        customerId={form.getValues("customer") || undefined}
+        onCustomerUpdated={fetchCustomers}
+      />
       <CustomerCreateModal
         open={openCustomerModal}
         setOpen={setOpenCustomerModal}

@@ -5,10 +5,6 @@ import React from "react";
 
 export default async function CreateInvoicePage() {
   const user = await getCurrentUser();
- 
-  return (
-    <Invoice
-      user={user as unknown as UserData}
-    />
-  );
+
+  return <Invoice user={user as unknown as UserData} />;
 }

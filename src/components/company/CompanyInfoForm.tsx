@@ -232,7 +232,9 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
         {/* Company Information */}
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Company Information
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -289,8 +291,8 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
               </span>
             </h2>
             <p className="text-sm text-gray-600 mb-4">
-              Complete address must be included on all invoices per Article 53, VAT Implementing
-              Regulations
+              Complete address must be included on all invoices per Article 53, VAT
+              Implementing Regulations
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField

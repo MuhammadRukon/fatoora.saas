@@ -17,7 +17,7 @@ import { LoaderIcon } from "@/components/loader";
 export default function Login() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -55,7 +55,7 @@ export default function Login() {
                   {form.formState.errors.root.message}
                 </p>
               )}
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -73,7 +73,7 @@ export default function Login() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -102,8 +102,8 @@ export default function Login() {
                 </Button>
                 <p className="text-center text-sm mt-2 text-gray-700">
                   Don&apos;t have an account?{" "}
-                  <Link 
-                    href="/register" 
+                  <Link
+                    href="/register"
                     className="text-blue-500 hover:underline"
                     prefetch={true}
                   >

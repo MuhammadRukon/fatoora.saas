@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { UserData } from "@/components/container/container";
 
 export default async function InvoiceDetailsPage({
   params,
@@ -20,8 +21,7 @@ export default async function InvoiceDetailsPage({
   }
 
   const [invoiceResult, userData] = await Promise.all([
-
-    payload.findByID({
+  payload.findByID({
       collection: "invoices",
       id,
       depth: 1,
@@ -43,7 +43,7 @@ export default async function InvoiceDetailsPage({
       },
     }),
 
-    getCurrentUserCompanyData(),
+   getCurrentUserCompanyData(),
   ]);
 
   if (!invoiceResult) {
@@ -63,27 +63,13 @@ export default async function InvoiceDetailsPage({
     notFound();
   }
 
-  // Extract logo data if it exists
-  const companyLogo =
-    userData.companyLogo && typeof userData.companyLogo === "object"
-      ? {
-          url: userData.companyLogo.url || "",
-          alt: userData.companyLogo.alt || "",
-        }
-      : null;
 
   return (
     <div className="space-y-6">
       <InvoiceActions invoiceId={id} />
       <InvoiceDisplay
         invoice={invoiceResult as any}
-        userData={{
-          companyName: userData.companyName || undefined,
-          country: userData.country || undefined,
-          vatNumber: userData.vatNumber || undefined,
-          phone: userData.phone || undefined,
-          companyLogo: companyLogo,
-        }}
+        userData={userData as UserData}
       />
     </div>
   );

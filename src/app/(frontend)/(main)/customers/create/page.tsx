@@ -1,28 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { createCustomer } from "@/lib/server-functions";
 import { CustomerForm, CustomerFormData } from "@/components/customer/form";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export function CustomerCreateModal({
-  open,
-  setOpen,
-  onCustomerCreated,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  onCustomerCreated?: () => void;
-}) {
+export default function CreateCustomerPage() {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -66,11 +53,8 @@ export function CustomerCreateModal({
       const result = await createCustomer(customerData);
 
       if (result.success) {
-        form.reset();
-        setOpen(false);
-        if (onCustomerCreated) {
-          onCustomerCreated();
-        }
+        router.push("/customers");
+        router.refresh();
       } else {
         setError(result.error || "Failed to create customer. Please try again.");
       }
@@ -82,41 +66,27 @@ export function CustomerCreateModal({
     }
   };
 
-  const handleClose = () => {
-    if (!isSubmitting) {
-      form.reset();
-      setError("");
-      setOpen(false);
-    }
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>Create New Customer</DialogTitle>
-            <DialogDescription>
-              Add a new customer to your list. Click save when you&apos;re done.
-            </DialogDescription>
-          </DialogHeader>
-          <CustomerForm form={form} isSubmitting={isSubmitting} />
-          {error && <p className="text-sm text-red-500 px-6 pb-4">{error}</p>}
-          <DialogFooter>
-            <Button
-              variant="outline"
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleClose}
-            >
-              Cancel
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Create New Customer</h1>
+      </div>
+      <div className=" max-w-4xl mx-auto">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <CustomerForm form={form} isSubmitting={isSubmitting} showAddressTitle={true} />
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button type="button" variant="outline" asChild disabled={isSubmitting}>
+              <Link href="/customers">Cancel</Link>
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Creating..." : "Create Customer"}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

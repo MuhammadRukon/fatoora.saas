@@ -17,7 +17,7 @@ import { LoaderIcon } from "@/components/loader";
 export default function Register() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  
+
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -56,7 +56,7 @@ export default function Register() {
                   {form.formState.errors.root.message}
                 </p>
               )}
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input
@@ -74,7 +74,7 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
@@ -92,7 +92,7 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -110,7 +110,7 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -128,7 +128,7 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
@@ -146,11 +146,11 @@ export default function Register() {
                   </p>
                 )}
               </div>
-              
+
               <div className="flex-col gap-2">
-                <Button 
-                  type="submit" 
-                  className="w-full cursor-pointer active:scale-95 transition-transform duration-150" 
+                <Button
+                  type="submit"
+                  className="w-full cursor-pointer active:scale-95 transition-transform duration-150"
                   disabled={isPending}
                   aria-busy={isPending}
                 >
@@ -158,8 +158,8 @@ export default function Register() {
                 </Button>
                 <p className="text-center text-sm text-gray-700 mt-2">
                   Already have an account?{" "}
-                  <Link 
-                    href="/login" 
+                  <Link
+                    href="/login"
                     className="text-blue-500 hover:underline"
                     prefetch={true}
                   >

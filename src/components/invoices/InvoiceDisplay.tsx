@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
+import { UserData } from "../container/container";
 
 interface RowEntry {
   description: string;
@@ -38,25 +39,6 @@ interface Invoice {
   qrCodeData?: string;
 }
 
-interface UserData {
-  companyName?: string;
-  vatNumber?: string;
-  registrationNumber?: string;
-  address?: {
-    buildingNumber?: string;
-    streetName?: string;
-    district?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    additionalNumber?: string;
-  };
-  phone?: string;
-  companyLogo?: {
-    url: string;
-    alt: string;
-  } | null;
-}
 
 interface InvoiceDisplayProps {
   invoice: Invoice;
@@ -84,7 +66,7 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
     additionalNumber?: string;
   }) => {
     if (!address) return "N/A";
-    
+
     const parts = [
       address.buildingNumber,
       address.streetName,
@@ -93,7 +75,7 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
       address.postalCode,
       address.country,
     ].filter(Boolean);
-    
+
     return parts.length > 0 ? parts.join(", ") : "N/A";
   };
 
