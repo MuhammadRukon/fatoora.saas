@@ -7,6 +7,7 @@ import { Invoices } from "./src/collections/Invoices";
 import { Customers } from "./src/collections/Customers";
 import { Accounts } from "./src/collections/Accounts";
 import { Media } from "./src/collections/Media";
+import { Notes } from "./src/collections/Notes";
 import path from "path";
 import { fileURLToPath } from "url";
 import { bnBd } from "@payloadcms/translations/languages/bnBd";
@@ -36,7 +37,7 @@ export default buildConfig({
     : [],
 
   // Define and configure your collections in this array
-  collections: [Users, Invoices, Customers, Accounts, Media],
+  collections: [Users, Invoices, Customers, Accounts, Media, Notes],
 
   //Define and configure globals (single documents)
   globals: [],

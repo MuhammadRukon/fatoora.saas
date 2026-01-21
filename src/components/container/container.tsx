@@ -75,6 +75,10 @@ export async function Container({ children }: ContainerProps) {
             title: "Customers",
             url: "/customers",
           },
+          {
+            title: "Notes",
+            url: "/notes",
+          },
         ],
       },
     ],

@@ -13,53 +13,53 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | "Pacific/Midway"
-  | "Pacific/Niue"
-  | "Pacific/Honolulu"
-  | "Pacific/Rarotonga"
-  | "America/Anchorage"
-  | "Pacific/Gambier"
-  | "America/Los_Angeles"
-  | "America/Tijuana"
-  | "America/Denver"
-  | "America/Phoenix"
-  | "America/Chicago"
-  | "America/Guatemala"
-  | "America/New_York"
-  | "America/Bogota"
-  | "America/Caracas"
-  | "America/Santiago"
-  | "America/Buenos_Aires"
-  | "America/Sao_Paulo"
-  | "Atlantic/South_Georgia"
-  | "Atlantic/Azores"
-  | "Atlantic/Cape_Verde"
-  | "Europe/London"
-  | "Europe/Berlin"
-  | "Africa/Lagos"
-  | "Europe/Athens"
-  | "Africa/Cairo"
-  | "Europe/Moscow"
-  | "Asia/Riyadh"
-  | "Asia/Dubai"
-  | "Asia/Baku"
-  | "Asia/Karachi"
-  | "Asia/Tashkent"
-  | "Asia/Calcutta"
-  | "Asia/Dhaka"
-  | "Asia/Almaty"
-  | "Asia/Jakarta"
-  | "Asia/Bangkok"
-  | "Asia/Shanghai"
-  | "Asia/Singapore"
-  | "Asia/Tokyo"
-  | "Asia/Seoul"
-  | "Australia/Brisbane"
-  | "Australia/Sydney"
-  | "Pacific/Guam"
-  | "Pacific/Noumea"
-  | "Pacific/Auckland"
-  | "Pacific/Fiji";
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
 
 export interface Config {
   auth: {
@@ -72,10 +72,11 @@ export interface Config {
     customers: Customer;
     accounts: Account;
     media: Media;
-    "payload-kv": PayloadKv;
-    "payload-locked-documents": PayloadLockedDocument;
-    "payload-preferences": PayloadPreference;
-    "payload-migrations": PayloadMigration;
+    notes: Note;
+    'payload-kv': PayloadKv;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -84,23 +85,20 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     accounts: AccountsSelect<false> | AccountsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
-    "payload-locked-documents":
-      | PayloadLockedDocumentsSelect<false>
-      | PayloadLockedDocumentsSelect<true>;
-    "payload-preferences":
-      | PayloadPreferencesSelect<false>
-      | PayloadPreferencesSelect<true>;
-    "payload-migrations": PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+    notes: NotesSelect<false> | NotesSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: string;
   };
   globals: {};
   globalsSelect: {};
-  locale: "en" | "bn-BD";
+  locale: 'en' | 'bn-BD';
   user: User & {
-    collection: "users";
+    collection: 'users';
   };
   jobs: {
     tasks: unknown;
@@ -178,7 +176,7 @@ export interface User {
   };
   phone?: string | null;
   companyLogo?: (string | null) | Media;
-  role: "admin" | "user";
+  role: 'admin' | 'user';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -252,11 +250,11 @@ export interface Invoice {
   /**
    * Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled
    */
-  status: "active" | "void" | "cancelled";
+  status: 'active' | 'void' | 'cancelled';
   /**
    * ZATCA Phase 1 Requirement (Article 53, VAT Implementing Regulations): Standard for VAT-registered customers (B2B/B2G), Simplified for non-registered customers (B2C)
    */
-  invoiceType: "standard" | "simplified";
+  invoiceType: 'standard' | 'simplified';
   customer: string | Customer;
   date: string;
   dueDate: string;
@@ -294,34 +292,34 @@ export interface Customer {
   vatNumber?: string | null;
   country?:
     | (
-        | "SA"
-        | "AE"
-        | "KW"
-        | "QA"
-        | "BH"
-        | "OM"
-        | "JO"
-        | "LB"
-        | "IQ"
-        | "SY"
-        | "YE"
-        | "PS"
-        | "EG"
-        | "SD"
-        | "LY"
-        | "TN"
-        | "DZ"
-        | "MA"
-        | "MR"
-        | "SO"
-        | "DJ"
-        | "KM"
+        | 'SA'
+        | 'AE'
+        | 'KW'
+        | 'QA'
+        | 'BH'
+        | 'OM'
+        | 'JO'
+        | 'LB'
+        | 'IQ'
+        | 'SY'
+        | 'YE'
+        | 'PS'
+        | 'EG'
+        | 'SD'
+        | 'LY'
+        | 'TN'
+        | 'DZ'
+        | 'MA'
+        | 'MR'
+        | 'SO'
+        | 'DJ'
+        | 'KM'
       )
     | null;
   /**
    * Customer's VAT registration status in Saudi Arabia
    */
-  vatTreatment: "not_registered" | "registered";
+  vatTreatment: 'not_registered' | 'registered';
   /**
    * ZATCA Phase 1 Requirement (Article 53): Address required for B2B invoices (Standard Tax Invoices)
    */
@@ -368,6 +366,53 @@ export interface Account {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notes".
+ */
+export interface Note {
+  id: string;
+  noteNumber: string;
+  /**
+   * ZATCA Phase 1 Requirement: Credit Note for returns/refunds, Debit Note for additional charges
+   */
+  documentType: 'credit' | 'debit';
+  /**
+   * The original invoice this note is associated with
+   */
+  originalInvoice: string | Invoice;
+  /**
+   * Note status - ZATCA requires notes cannot be deleted, only voided/cancelled
+   */
+  status: 'active' | 'void' | 'cancelled';
+  customer: string | Customer;
+  date: string;
+  dueDate: string;
+  /**
+   * Reason for issuing this credit/debit note (e.g., 'Return of goods', 'Additional charges')
+   */
+  reason: string;
+  rowEntries: {
+    description: string;
+    account: string;
+    quantity: number;
+    price: number;
+    taxRate: number;
+    id?: string | null;
+  }[];
+  pricesExcludeTax?: boolean | null;
+  discountTotal?: number | null;
+  /**
+   * QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for notes associated with Simplified invoices, optional for Standard invoices
+   */
+  qrCodeData?: string | null;
+  subtotal?: number | null;
+  totalTax?: number | null;
+  total?: number | null;
+  createdBy: string | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -391,28 +436,32 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
-        relationTo: "users";
+        relationTo: 'users';
         value: string | User;
       } | null)
     | ({
-        relationTo: "invoices";
+        relationTo: 'invoices';
         value: string | Invoice;
       } | null)
     | ({
-        relationTo: "customers";
+        relationTo: 'customers';
         value: string | Customer;
       } | null)
     | ({
-        relationTo: "accounts";
+        relationTo: 'accounts';
         value: string | Account;
       } | null)
     | ({
-        relationTo: "media";
+        relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'notes';
+        value: string | Note;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: string | User;
   };
   updatedAt: string;
@@ -425,7 +474,7 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: string;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: string | User;
   };
   key?: string | null;
@@ -612,6 +661,39 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notes_select".
+ */
+export interface NotesSelect<T extends boolean = true> {
+  noteNumber?: T;
+  documentType?: T;
+  originalInvoice?: T;
+  status?: T;
+  customer?: T;
+  date?: T;
+  dueDate?: T;
+  reason?: T;
+  rowEntries?:
+    | T
+    | {
+        description?: T;
+        account?: T;
+        quantity?: T;
+        price?: T;
+        taxRate?: T;
+        id?: T;
+      };
+  pricesExcludeTax?: T;
+  discountTotal?: T;
+  qrCodeData?: T;
+  subtotal?: T;
+  totalTax?: T;
+  total?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -658,6 +740,7 @@ export interface Auth {
   [k: string]: unknown;
 }
 
-declare module "payload" {
+
+declare module 'payload' {
   export interface GeneratedTypes extends Config {}
 }

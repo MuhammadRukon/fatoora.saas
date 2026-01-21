@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
+import { UserData } from "../container/container";
 
 interface RowEntry {
   description: string;
@@ -39,25 +40,7 @@ interface Invoice {
   qrCodeData?: string;
 }
 
-interface UserData {
-  companyName?: string;
-  vatNumber?: string;
-  registrationNumber?: string;
-  address?: {
-    buildingNumber?: string;
-    streetName?: string;
-    district?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-    additionalNumber?: string;
-  };
-  phone?: string;
-  companyLogo?: {
-    url: string;
-    alt: string;
-  } | null;
-}
+
 
 interface InvoicePrintViewProps {
   invoiceId: string;
@@ -178,7 +161,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
 
           // Handle print dialog close/cancel
           const handleAfterPrint = () => {
-            // redirectBack();
+            redirectBack();
             window.removeEventListener("afterprint", handleAfterPrint);
           };
 
@@ -188,7 +171,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           // Fallback for older browsers - check if print dialog is still open
           // This is a workaround since afterprint might not fire in all cases
           setTimeout(() => {
-            // redirectBack();
+            redirectBack();
           }, 500);
         }, 500);
       } else if (downloadPDF) {

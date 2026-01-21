@@ -9,6 +9,7 @@ import { updateCompanyInfo, uploadCompanyLogo } from "@/lib/server-functions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Upload, X } from "lucide-react";
+import { UserData } from "../container/container";
 
 interface CompanyInfoData {
   companyName: string;
@@ -26,36 +27,14 @@ interface CompanyInfoData {
   phone: string;
 }
 
-interface CompanyInfoFormProps {
-  initialData?: {
-    companyName?: string;
-    vatNumber?: string;
-    registrationNumber?: string;
-    address?: {
-      buildingNumber?: string;
-      streetName?: string;
-      district?: string;
-      city?: string;
-      postalCode?: string;
-      country?: string;
-      additionalNumber?: string;
-    };
-    phone?: string;
-    companyLogo?: {
-      id: string;
-      url: string;
-      alt?: string;
-    } | null;
-  };
-}
-
-export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
+// company is user
+export function CompanyInfoForm({ company }: { company: UserData }) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(
-    initialData?.companyLogo?.url || null
+    company?.companyLogo?.url || null
   );
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -63,19 +42,19 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
 
   const form = useForm<CompanyInfoData>({
     defaultValues: {
-      companyName: initialData?.companyName || "",
-      vatNumber: initialData?.vatNumber || "",
-      registrationNumber: initialData?.registrationNumber || "",
+      companyName: company?.companyName || "",
+      vatNumber: company?.vatNumber || "",
+      registrationNumber: company?.registrationNumber || "",
       address: {
-        buildingNumber: initialData?.address?.buildingNumber || "",
-        streetName: initialData?.address?.streetName || "",
-        district: initialData?.address?.district || "",
-        city: initialData?.address?.city || "",
-        postalCode: initialData?.address?.postalCode || "",
-        country: initialData?.address?.country || "Saudi Arabia",
-        additionalNumber: initialData?.address?.additionalNumber || "",
+        buildingNumber: company?.address?.buildingNumber || "",
+        streetName: company?.address?.streetName || "",
+        district: company?.address?.district || "",
+        city: company?.address?.city || "",
+        postalCode: company?.address?.postalCode || "",
+        country: company?.address?.country || "Saudi Arabia",
+        additionalNumber: company?.address?.additionalNumber || "",
       },
-      phone: initialData?.phone || "",
+      phone: company?.phone || "",
     },
   });
 

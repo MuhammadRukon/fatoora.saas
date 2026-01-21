@@ -1,11 +1,11 @@
-import { Invoice } from "@payload-types";
+import { Note } from "@payload-types";
 import { CollectionConfig } from "payload";
 
-export const Invoices: CollectionConfig = {
-  slug: "invoices",
+export const Notes: CollectionConfig = {
+  slug: "notes",
   admin: {
-    useAsTitle: "invoiceNumber",
-    defaultColumns: ["invoiceNumber", "customer", "date", "total"],
+    useAsTitle: "noteNumber",
+    defaultColumns: ["noteNumber", "documentType", "originalInvoice", "date", "total"],
   },
   access: {
     read: ({ req: { user } }) => {
@@ -36,16 +36,44 @@ export const Invoices: CollectionConfig = {
       }
       return false;
     },
-    // ZATCA Phase 1 Requirement: Invoices cannot be deleted
-    // Use status field to void/cancel invoices instead
+    // ZATCA Phase 1 Requirement: Notes cannot be deleted (same as invoices)
+    // Use status field to void/cancel notes instead
     delete: () => false,
   },
   fields: [
     {
-      name: "invoiceNumber",
+      name: "noteNumber",
       type: "text",
       required: true,
       unique: true,
+    },
+    {
+      name: "documentType",
+      type: "select",
+      required: true,
+      options: [
+        {
+          label: "Credit Note",
+          value: "credit",
+        },
+        {
+          label: "Debit Note",
+          value: "debit",
+        },
+      ],
+      admin: {
+        description:
+          "ZATCA Phase 1 Requirement: Credit Note for returns/refunds, Debit Note for additional charges",
+      },
+    },
+    {
+      name: "originalInvoice",
+      type: "relationship",
+      relationTo: "invoices" as any,
+      required: true,
+      admin: {
+        description: "The original invoice this note is associated with",
+      },
     },
     {
       name: "status",
@@ -68,27 +96,7 @@ export const Invoices: CollectionConfig = {
       ],
       admin: {
         description:
-          "Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled",
-      },
-    },
-    {
-      name: "invoiceType",
-      type: "select",
-      required: true,
-      defaultValue: "simplified",
-      options: [
-        {
-          label: "Standard Tax Invoice (B2B/B2G)",
-          value: "standard",
-        },
-        {
-          label: "Simplified Tax Invoice (B2C)",
-          value: "simplified",
-        },
-      ],
-      admin: {
-        description:
-          "ZATCA Phase 1 Requirement (Article 53, VAT Implementing Regulations): Standard for VAT-registered customers (B2B/B2G), Simplified for non-registered customers (B2C)",
+          "Note status - ZATCA requires notes cannot be deleted, only voided/cancelled",
       },
     },
     {
@@ -118,6 +126,14 @@ export const Invoices: CollectionConfig = {
       },
     },
     {
+      name: "reason",
+      type: "text",
+      required: true,
+      admin: {
+        description: "Reason for issuing this credit/debit note (e.g., 'Return of goods', 'Additional charges')",
+      },
+    },
+    {
       name: "rowEntries",
       type: "array",
       required: true,
@@ -144,7 +160,6 @@ export const Invoices: CollectionConfig = {
           name: "price",
           type: "number",
           required: true,
-          min: 0,
         },
         {
           name: "taxRate",
@@ -170,16 +185,29 @@ export const Invoices: CollectionConfig = {
     {
       name: "qrCodeData",
       type: "textarea",
-      required: true,
       admin: {
         description:
-          "QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for Simplified invoices, optional for Standard invoices",
+          "QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for notes associated with Simplified invoices, optional for Standard invoices",
       },
-      validate: (value, { data  }) => {
-     
-        if ((data as Invoice).invoiceType === "simplified" && !value) {
-          return "QR Code is mandatory for Simplified Tax Invoices (B2C)";
+      validate: async (value, { data, req }) => {
+        const noteData = data as Note;
+        // QR Code is mandatory for notes associated with simplified invoices (B2C)
+        if (!noteData?.originalInvoice) return true; // Skip validation if invoice not yet selected
+
+        try {
+          const invoice = await req.payload.findByID({
+            collection: "invoices",
+            id: typeof noteData.originalInvoice === "string" ? noteData.originalInvoice : (noteData.originalInvoice as any).id,
+          });
+
+          if (invoice && (invoice as any).invoiceType === "simplified" && !value) {
+            return "QR Code is mandatory for notes associated with Simplified Tax Invoices (B2C)";
+          }
+        } catch (error) {
+          // If invoice lookup fails, skip validation
+          return true;
         }
+
         return true;
       },
     },
@@ -198,10 +226,8 @@ export const Invoices: CollectionConfig = {
             return data.rowEntries.reduce((sum: number, item: any) => {
               const baseAmount = (item.quantity || 0) * (item.price || 0);
               if (pricesExcludeTax) {
-                // Subtotal is base amount (excl. VAT)
                 return sum + baseAmount;
               } else {
-                // Subtotal is base amount minus VAT (extract base from price that includes VAT)
                 const taxRate = item.taxRate || 0;
                 const baseWithoutVAT = baseAmount / (1 + taxRate / 100);
                 return sum + baseWithoutVAT;
@@ -228,10 +254,8 @@ export const Invoices: CollectionConfig = {
               const taxRate = item.taxRate || 0;
 
               if (pricesExcludeTax) {
-                // VAT calculated on base amount
                 return sum + (baseAmount * taxRate) / 100;
               } else {
-                // VAT extracted from price that includes VAT
                 const vatAmount = baseAmount - baseAmount / (1 + taxRate / 100);
                 return sum + vatAmount;
               }
@@ -307,22 +331,32 @@ export const Invoices: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, req, operation }) => {
-        if (operation === "create" && data && !data.invoiceNumber) {
-          const lastInvoice = await req.payload.find({
-            collection: "invoices" as any,
+        if (operation === "create" && data && !data.noteNumber) {
+          // Determine prefix based on document type
+          const prefix = data.documentType === "credit" ? "CN" : "DN";
+
+          // Find last note of the same type
+          const lastNote = await req.payload.find({
+            collection: "notes" as any,
             limit: 1,
-            sort: "-invoiceNumber",
+            sort: "-noteNumber",
+            where: {
+              documentType: {
+                equals: data.documentType,
+              },
+            },
           });
 
           let nextNumber = 1;
-          if (lastInvoice.docs.length > 0) {
-            const lastNumber = parseInt(
-              (lastInvoice.docs[0] as any).invoiceNumber.split("-")[1]
-            );
-            nextNumber = lastNumber + 1;
+          if (lastNote.docs.length > 0) {
+            const lastNumberStr = (lastNote.docs[0] as any).noteNumber;
+            const match = lastNumberStr.match(/-(\d+)$/);
+            if (match) {
+              nextNumber = parseInt(match[1]) + 1;
+            }
           }
 
-          data.invoiceNumber = `INV-${nextNumber}`;
+          data.noteNumber = `${prefix}-${nextNumber}`;
         }
 
         return data;
@@ -330,3 +364,4 @@ export const Invoices: CollectionConfig = {
     ],
   },
 };
+

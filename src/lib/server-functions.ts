@@ -420,3 +420,105 @@ export async function uploadCompanyLogo(formData: FormData) {
     return { success: false, error: error.message || "Failed to upload logo" };
   }
 }
+
+// Notes functions for ZATCA Phase 1 compliance
+export async function getNotes() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const notes = await payload.find({
+      collection: "notes",
+      where: {
+        createdBy: {
+          equals: user.id,
+        },
+      },
+      depth: 2, // Include related invoice and customer data
+    });
+
+    return { success: true, docs: notes.docs };
+  } catch (error: any) {
+    console.error("Error fetching notes:", error);
+    return { success: false, error: error.message || "Failed to fetch notes" };
+  }
+}
+
+export async function getNotesByInvoice(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const notes = await payload.find({
+      collection: "notes",
+      where: {
+        and: [
+          {
+            originalInvoice: {
+              equals: invoiceId,
+            },
+          },
+          {
+            createdBy: {
+              equals: user.id,
+            },
+          },
+        ],
+      },
+      depth: 2,
+    });
+
+    return { success: true, docs: notes.docs };
+  } catch (error: any) {
+    console.error("Error fetching notes by invoice:", error);
+    return { success: false, error: error.message || "Failed to fetch notes" };
+  }
+}
+
+export async function getNote(id: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const note = await payload.findByID({
+      collection: "notes",
+      id,
+      depth: 2,
+      overrideAccess: false,
+      user: user,
+    });
+
+    return { success: true, note };
+  } catch (error: any) {
+    console.error("Error fetching note:", error);
+    return { success: false, error: error.message || "Failed to fetch note" };
+  }
+}
+
+export async function getInvoice(id: string) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const invoice = await payload.findByID({
+      collection: "invoices",
+      id,
+      depth: 2,
+      overrideAccess: false,
+      user: user,
+    });
+
+    return { success: true, invoice };
+  } catch (error: any) {
+    console.error("Error fetching invoice:", error);
+    return { success: false, error: error.message || "Failed to fetch invoice" };
+  }
+}
