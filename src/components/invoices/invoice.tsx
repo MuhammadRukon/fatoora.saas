@@ -48,7 +48,7 @@ interface Account {
 interface UserData {
   companyName?: string;
   country?: string;
-  taxRegNum?: string;
+  vatNumber?: string;
   phone?: string;
   companyLogo?: {
     url: string;
@@ -189,10 +189,10 @@ export function Invoice({ userData }: InvoiceProps) {
   const companyData = useMemo(
     () => ({
       companyName: userData?.companyName,
-      taxRegNum: userData?.taxRegNum,
+      vatNumber: userData?.vatNumber,
       country: userData?.country,
     }),
-    [userData?.companyName, userData?.taxRegNum, userData?.country]
+    [userData?.companyName, userData?.vatNumber, userData?.country]
   );
 
   // Manual QR code generation
@@ -201,7 +201,7 @@ export function Invoice({ userData }: InvoiceProps) {
     const missingFields: string[] = [];
 
     if (!companyData.companyName) missingFields.push("Company Name");
-    if (!companyData.taxRegNum) missingFields.push("Tax Registration Number");
+    if (!companyData.vatNumber) missingFields.push("Tax Registration Number");
     if (!customer) missingFields.push("Customer");
     if (!invoiceDate) missingFields.push("Invoice Date");
     if (total <= 0) missingFields.push("Invoice Total (must be greater than 0)");
@@ -222,7 +222,7 @@ export function Invoice({ userData }: InvoiceProps) {
     try {
       const qrData = generateInvoiceQRCode({
         companyName: companyData.companyName!,
-        vatNumber: companyData.taxRegNum!,
+        vatNumber: companyData.vatNumber!,
         invoiceDate: new Date(invoiceDate),
         totalWithVAT: total,
         vatAmount: tax,
@@ -422,7 +422,7 @@ export function Invoice({ userData }: InvoiceProps) {
               </p>
               <p className="text-gray-600">{userData?.country || "Country"}</p>
               <p className="text-gray-600">
-                Tax registration number: {userData?.taxRegNum || "—"}
+                Tax registration number: {userData?.vatNumber || "—"}
               </p>
               {userData?.phone && <p className="text-gray-600">{userData.phone}</p>}
             </div>

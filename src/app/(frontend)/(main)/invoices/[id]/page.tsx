@@ -80,7 +80,7 @@ export default async function InvoiceDetailsPage({
         userData={{
           companyName: userData.companyName || undefined,
           country: userData.country || undefined,
-          taxRegNum: userData.taxRegNum || undefined,
+          vatNumber: userData.vatNumber || undefined,
           phone: userData.phone || undefined,
           companyLogo: companyLogo,
         }}

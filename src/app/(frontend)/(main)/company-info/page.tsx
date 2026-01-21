@@ -22,7 +22,7 @@ export default async function CompanyInfoPage() {
           initialData={{
             companyName: user?.companyName || "",
             country: user?.country || "",
-            taxRegNum: user?.taxRegNum || "",
+            vatNumber: user?.vatNumber || "",
             phone: user?.phone || "",
             companyLogo: companyLogo,
           }}

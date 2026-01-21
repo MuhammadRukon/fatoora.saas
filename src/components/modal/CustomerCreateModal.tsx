@@ -55,7 +55,7 @@ export function CustomerCreateModal({
   onCustomerCreated?: () => void;
 }) {
   const [name, setName] = useState("");
-  const [taxRegNum, setTaxRegNum] = useState("");
+  const [vatNumber, setvatNumber] = useState("");
   const [country, setCountry] = useState("");
   const [vatTreatment, setVatTreatment] = useState("not_registered");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,7 +64,7 @@ export function CustomerCreateModal({
   const handleCreateCustomer = async () => {
     console.log("handleCreateCustomer called with:", {
       name,
-      taxRegNum,
+      vatNumber,
       country,
       vatTreatment,
     });
@@ -86,7 +86,7 @@ export function CustomerCreateModal({
       console.log("Calling createCustomer...");
       const customerData = {
         name: name.trim(),
-        taxRegNum: taxRegNum.trim() || undefined,
+        vatNumber: vatNumber.trim() || undefined,
         country: country || undefined,
         vatTreatment,
       };
@@ -98,7 +98,7 @@ export function CustomerCreateModal({
 
         // Reset form and close modal
         setName("");
-        setTaxRegNum("");
+        setvatNumber("");
         setCountry("");
         setVatTreatment("not_registered");
         setOpen(false);
@@ -129,7 +129,7 @@ export function CustomerCreateModal({
   const handleClose = () => {
     if (!isSubmitting) {
       setName("");
-      setTaxRegNum("");
+      setvatNumber("");
       setCountry("");
       setVatTreatment("not_registered");
       setError("");
@@ -177,9 +177,9 @@ export function CustomerCreateModal({
               <Label htmlFor="tax-reg-num">Tax Registration Number</Label>
               <Input
                 id="tax-reg-num"
-                name="taxRegNum"
-                value={taxRegNum}
-                onChange={(e) => setTaxRegNum(e.target.value)}
+                name="vatNumber"
+                value={vatNumber}
+                onChange={(e) => setvatNumber(e.target.value)}
                 placeholder="Enter tax registration number"
                 disabled={isSubmitting}
               />

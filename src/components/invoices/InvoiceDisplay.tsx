@@ -32,7 +32,7 @@ interface Invoice {
 interface UserData {
   companyName?: string;
   country?: string;
-  taxRegNum?: string;
+  vatNumber?: string;
   phone?: string;
   companyLogo?: {
     url: string;
@@ -121,9 +121,9 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
                 {userData.companyName || "Company Name"}
               </p>
               {userData.country && <p className="text-gray-600">{userData.country}</p>}
-              {userData.taxRegNum && (
+              {userData.vatNumber && (
                 <p className="text-gray-600 text-xs mt-1">
-                  Tax Reg: {userData.taxRegNum}
+                  Tax Reg: {userData.vatNumber}
                 </p>
               )}
               {userData.phone && (

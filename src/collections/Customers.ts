@@ -56,7 +56,7 @@ export const Customers: CollectionConfig = {
       label: "Customer Name",
     },
     {
-      name: "taxRegNum",
+      name: "vatNumber",
       type: "text",
       label: "Tax Registration Number",
       admin: {

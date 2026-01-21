@@ -13,7 +13,7 @@ import { Upload, X } from "lucide-react";
 interface CompanyInfoData {
   companyName: string;
   country: string;
-  taxRegNum: string;
+  vatNumber: string;
   phone: string;
 }
 
@@ -21,7 +21,7 @@ interface CompanyInfoFormProps {
   initialData?: {
     companyName?: string;
     country?: string;
-    taxRegNum?: string;
+    vatNumber?: string;
     phone?: string;
     companyLogo?: {
       id: string;
@@ -47,7 +47,7 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
     defaultValues: {
       companyName: initialData?.companyName || "",
       country: initialData?.country || "",
-      taxRegNum: initialData?.taxRegNum || "",
+      vatNumber: initialData?.vatNumber || "",
       phone: initialData?.phone || "",
     },
   });
@@ -227,7 +227,7 @@ export function CompanyInfoForm({ initialData }: CompanyInfoFormProps) {
 
           <FormField
             control={form.control}
-            name="taxRegNum"
+            name="vatNumber"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tax Registration Number</FormLabel>

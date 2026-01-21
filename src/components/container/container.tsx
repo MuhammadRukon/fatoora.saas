@@ -35,7 +35,7 @@ export type UserData = {
   lastName: string;
   companyName?: string | null;
   country?: string | null;
-  taxRegNum?: string | null;
+  vatNumber?: string | null;
   phone?: string | null;
   photoUrl?: string | null;
   companyLogo?: {

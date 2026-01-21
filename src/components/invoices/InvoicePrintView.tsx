@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import { formatDate } from "@/lib/utils";
 
 interface RowEntry {
   description: string;
@@ -32,7 +33,7 @@ interface Invoice {
 interface UserData {
   companyName?: string;
   country?: string;
-  taxRegNum?: string;
+  vatNumber?: string;
   phone?: string;
   companyLogo?: {
     url: string;
@@ -128,6 +129,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               window.location.href = urlToReturn || "";
             }
           } catch (error) {
+            console.error("Error redirecting back:", error);
             // If cross-origin or blocked, just close the window
             // User will remain on their original page
             window.close();
@@ -142,7 +144,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
 
           // Handle print dialog close/cancel
           const handleAfterPrint = () => {
-            redirectBack();
+            // redirectBack();
             window.removeEventListener("afterprint", handleAfterPrint);
           };
 
@@ -152,7 +154,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           // Fallback for older browsers - check if print dialog is still open
           // This is a workaround since afterprint might not fire in all cases
           setTimeout(() => {
-            redirectBack();
+            // redirectBack();
           }, 500);
         }, 500);
       } else if (downloadPDF) {
@@ -219,14 +221,6 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   const calculateLineTotal = (item: RowEntry) => {
     const baseAmount = item.quantity * item.price;
     if (invoice?.pricesExcludeTax) {
@@ -259,40 +253,20 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
     <div className="invoice-container" ref={printRef}>
       {/* Header Section */}
       <div className="invoice-header">
-        {/* Invoice Title and Details */}
-        <div>
-          <h1 className="invoice-title">Invoice</h1>
-          <div className="invoice-details-grid">
-            <div>
-              <div className="invoice-detail-label">Invoice Number</div>
-              <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
-            </div>
-            <div>
-              <div className="invoice-detail-label">Date</div>
-              <div className="invoice-detail-value">{formatDate(invoice.date)}</div>
-            </div>
-            <div>
-              <div className="invoice-detail-label">Customer</div>
-              <div className="invoice-detail-value">
-                {typeof invoice.customer === "object" ? invoice.customer.name : "Unknown"}
-              </div>
-            </div>
-            <div>
-              <div className="invoice-detail-label">Due Date</div>
-              <div className="invoice-detail-value">{formatDate(invoice.dueDate)}</div>
-            </div>
+        <div className="company-details">
+            <p className="company-name">{userData.companyName || "Company Name"}</p>
+            {userData.country && <p className="company-detail">{userData.country}</p>}
+            {userData.vatNumber && (
+              <p className="company-detail"><span> Vat Number: </span> {userData.vatNumber}</p>
+            )}
+            {userData.phone && <p className="company-detail">{userData.phone}</p>}
           </div>
-        </div>
-
-        {/* Company Logo and Details */}
-        <div className="company-info">
           <div className="company-logo">
             {userData.companyLogo?.url ? (
               <Image
                 src={userData.companyLogo.url}
                 alt={userData.companyLogo.alt || "Company logo"}
-                width={120}
-                height={120}
+                fill
                 style={{ objectFit: "contain" }}
               />
             ) : (
@@ -305,54 +279,83 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               />
             )}
           </div>
-          <div>
+          {/* arabic */}
+          <div style={{textAlign: "right"}} className="company-details">
             <p className="company-name">{userData.companyName || "Company Name"}</p>
             {userData.country && <p className="company-detail">{userData.country}</p>}
-            {userData.taxRegNum && (
-              <p className="company-detail">Tax Reg: {userData.taxRegNum}</p>
+            {userData.vatNumber && (
+              <p className="company-detail"><span> رقم ضريبة القيمة المضافة: </span> {userData.vatNumber}</p>
             )}
             {userData.phone && <p className="company-detail">{userData.phone}</p>}
           </div>
-        </div>
+  
       </div>
 
-      {/* Items Section */}
-      <div className="items-section">
-        <div className="items-header">
-          <h2 className="items-title">Items</h2>
-          <div style={{ fontSize: "12px", color: "#6b7280" }}>
-            Prices are{" "}
-            <span style={{ fontWeight: "500", color: "#374151" }}>
-              {invoice.pricesExcludeTax ? "excluding tax" : "including tax"}
-            </span>
+          {/* Invoice Title and Details */}
+        <div className="invoice-details">
+          <h1 className="invoice-title">Tax Invoice  <span>فاتورة ضريبية</span></h1>
+          <div>
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>Invoice Number</div>
+              <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
+              <div className="invoice-detail-label" style={{ textAlign: "right" }}>رقم الفاتورة</div>
+            </div>
+
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>Date</div>
+              <div className="invoice-detail-value">{formatDate(invoice.date)}</div>
+              <div className="invoice-detail-label" style={{ textAlign: "right" }}>تاريخ</div>
+            </div>
+
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>Due Date</div>
+              <div className="invoice-detail-value">{formatDate(invoice.dueDate)}</div>
+              <div className="invoice-detail-label" style={{ textAlign: "right" }}>تاريخ الاستحقاق</div>
+            </div>
+
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>Customer</div>
+              <div className="invoice-detail-value">{invoice.customer.name}</div>
+              <div className="invoice-detail-label" style={{ textAlign: "right" }}>العميل</div>
+            </div>
+
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>Address</div>
+              <div className="invoice-detail-value">{"invoice.customer.address"}</div>
+              <div className="invoice-detail-label" style={{ textAlign: "right" }}>العنوان</div>
+            </div>
           </div>
         </div>
 
+      {/* Items Section */}
+      <div className="items-section">
         <table className="items-table">
           <thead>
             <tr>
-              <th>Description</th>
-              <th>Account</th>
-              <th className="text-center">Qty</th>
-              <th className="text-right">Price</th>
-              <th className="text-right">Tax Rate</th>
-              <th className="text-right">Total</th>
+              <th>No. <span style={{display: "block"}}>الرقم</span></th>
+              <th>Description <span style={{display: "block"}}>الوصف</span></th>
+              <th>Account <span style={{display: "block"}}>الحساب</span></th>
+              <th className="text-center">Qty <span style={{display: "block"}}>الكمية</span></th>
+              <th className="text-right">Price <span style={{display: "block"}}>السعر</span></th>
+              <th className="text-right">Tax Rate <span style={{display: "block"}}> القيمة المضافة</span></th>
+              <th className="text-right">Total <span style={{display: "block"}}>المجموع</span></th>
             </tr>
           </thead>
           <tbody>
             {invoice.rowEntries.map((item, index) => (
               <tr key={index}>
-                <td style={{ color: "#111827" }}>{item.description}</td>
-                <td className="text-gray-600">{item.account}</td>
-                <td className="text-center" style={{ color: "#111827" }}>
+                <td>{index + 1}</td>
+                <td>{item.description}</td>
+                <td>{item.account}</td>
+                <td>
                   {item.quantity}
                 </td>
-                <td className="text-right" style={{ color: "#111827" }}>
-                  SAR {item.price.toFixed(2)}
+                <td>
+                  {item.price.toFixed(2)}
                 </td>
-                <td className="text-right text-gray-600">{item.taxRate}%</td>
+                <td className="text-center">{item.taxRate}%</td>
                 <td className="text-right font-medium" style={{ color: "#111827" }}>
-                  SAR {calculateLineTotal(item).toFixed(2)}
+                 {calculateLineTotal(item).toFixed(2)}
                 </td>
               </tr>
             ))}
@@ -381,26 +384,18 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         {/* Summary */}
         <div className="summary-box">
           <div className="summary-row">
-            <span className="summary-label">
-              Subtotal {invoice.pricesExcludeTax ? "(excl. VAT)" : "(incl. VAT)"}
-            </span>
-            <span className="summary-value">SAR {invoice.subtotal.toFixed(2)}</span>
+            <p className="summary-label">
+              Subtotal <span style={{display: "block"}}>المجموع الفرعي</span>
+            </p>
+            <p className="summary-value">SAR {invoice.subtotal.toFixed(2)}</p>
           </div>
           <div className="summary-row">
-            <span className="summary-label">VAT Amount</span>
-            <span className="summary-value">SAR {invoice.totalTax.toFixed(2)}</span>
+            <p className="summary-label">Total VAT <span style={{display: "block"}}>إجمالي ضريبة القيمة المضافة</span></p>
+            <p className="summary-value">SAR {invoice.totalTax.toFixed(2)}</p>
           </div>
-          {invoice.discountTotal > 0 && (
-            <div className="summary-row">
-              <span className="summary-label">Discount</span>
-              <span className="summary-value" style={{ color: "#dc2626" }}>
-                - SAR {invoice.discountTotal.toFixed(2)}
-              </span>
-            </div>
-          )}
-          <div className="summary-total">
-            <span>Total {invoice.pricesExcludeTax ? "(excl. VAT)" : "(incl. VAT)"}</span>
-            <span>SAR {invoice.total.toFixed(2)}</span>
+          <div className="summary-row">
+            <p style={{marginRight: "10px"}}>Total including VAT <span style={{display: "block"}}>الإجمالي شاملاً ضريبة القيمة المضافة</span></p>
+            <p>SAR {invoice.total.toFixed(2)}</p>
           </div>
         </div>
       </div>

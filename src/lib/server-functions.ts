@@ -125,7 +125,7 @@ export const getCurrentUserCompanyData = cache(async () => {
       select: {
         companyName: true,
         country: true,
-        taxRegNum: true,
+        vatNumber: true,
         phone: true,
         companyLogo: true,
       },
@@ -163,7 +163,7 @@ export async function getCustomers() {
 
 export async function createCustomer(data: {
   name: string;
-  taxRegNum?: string;
+  vatNumber?: string;
   country?: string;
   vatTreatment: string;
 }) {
@@ -177,7 +177,7 @@ export async function createCustomer(data: {
       collection: "customers",
       data: {
         name: data.name,
-        taxRegNum: data.taxRegNum,
+        vatNumber: data.vatNumber,
         country: data.country,
         vatTreatment: data.vatTreatment,
         createdBy: user.id,
@@ -239,7 +239,7 @@ export async function createAccount(name: string) {
 export async function updateCompanyInfo(data: {
   companyName?: string;
   country?: string;
-  taxRegNum?: string;
+  vatNumber?: string;
   phone?: string;
 }) {
   try {

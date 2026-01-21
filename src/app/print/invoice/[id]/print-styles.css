@@ -33,78 +33,77 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 30px;
-}
-
-.invoice-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
   margin-bottom: 20px;
 }
 
-.invoice-details-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px 30px;
-  margin-top: 15px;
+.invoice-details{
+text-align:center;
 }
 
-.invoice-detail-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.invoice-detail-value {
-  font-size: 14px;
+.invoice-title {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 5px;
+  font-size: 28px;
   font-weight: 600;
   color: #111827;
 }
 
-/* Company Info */
-.company-info {
+.invoice-detail-row{
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
+  flex:1;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  padding: 0 5px;
+  font-size: 14px;
+  > * {
+    flex: 1;
+  }
+  &:last-child {
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+
+.invoice-detail-label {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.company-details {
+flex: 1;
 }
 
 .company-logo {
+  position: relative;
   width: 120px;
   height: 120px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
   background: #ffffff;
   overflow: hidden;
 }
 
-.company-logo img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  padding: 8px;
-}
 
 .company-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 4px;
 }
 
 .company-detail {
-  font-size: 12px;
-  color: #4b5563;
+  font-size: 14px;
   margin-top: 2px;
 }
 
+.company-detail span {
+  font-weight: 600;
+}
 /* Items Section */
 .items-section {
   margin-top: 30px;
@@ -135,11 +134,11 @@ body {
 }
 
 .items-table th {
-  padding: 12px 16px;
+  padding: 14px 16px;
   text-align: left;
   font-weight: 600;
   color: #374151;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .items-table th.text-center {
@@ -160,7 +159,7 @@ body {
 }
 
 .items-table td {
-  padding: 12px 16px;
+  padding: 14px 16px;
   color: #111827;
 }
 
@@ -216,7 +215,8 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 14px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -224,24 +224,10 @@ body {
   border-bottom: none;
 }
 
-.summary-label {
-  color: #4b5563;
-}
-
-.summary-value {
-  font-weight: 500;
-  color: #111827;
-}
-
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  font-size: 18px;
+.summary-row span {
   font-weight: 600;
-  color: #111827;
-  border-radius: 6px;
 }
+
 
 /* Print Media Queries */
 @media print {

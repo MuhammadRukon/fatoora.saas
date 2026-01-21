@@ -63,7 +63,7 @@ export const Users: CollectionConfig = {
       required: false,
     },
     {
-      name: "taxRegNum",
+      name: "vatNumber",
       type: "text",
       required: false,
     },

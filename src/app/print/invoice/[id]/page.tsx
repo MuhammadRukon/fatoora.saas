@@ -25,10 +25,11 @@ export default async function InvoicePrintPage({
       userData={{
         companyName: user?.companyName || undefined,
         country: user?.country || undefined,
-        taxRegNum: user?.taxRegNum || undefined,
+        vatNumber: user?.vatNumber || undefined,
         phone: user?.phone || undefined,
         companyLogo: companyLogo,
       }}
     />
   );
 }
+

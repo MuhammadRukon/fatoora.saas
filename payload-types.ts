@@ -13,53 +13,53 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | "Pacific/Midway"
-  | "Pacific/Niue"
-  | "Pacific/Honolulu"
-  | "Pacific/Rarotonga"
-  | "America/Anchorage"
-  | "Pacific/Gambier"
-  | "America/Los_Angeles"
-  | "America/Tijuana"
-  | "America/Denver"
-  | "America/Phoenix"
-  | "America/Chicago"
-  | "America/Guatemala"
-  | "America/New_York"
-  | "America/Bogota"
-  | "America/Caracas"
-  | "America/Santiago"
-  | "America/Buenos_Aires"
-  | "America/Sao_Paulo"
-  | "Atlantic/South_Georgia"
-  | "Atlantic/Azores"
-  | "Atlantic/Cape_Verde"
-  | "Europe/London"
-  | "Europe/Berlin"
-  | "Africa/Lagos"
-  | "Europe/Athens"
-  | "Africa/Cairo"
-  | "Europe/Moscow"
-  | "Asia/Riyadh"
-  | "Asia/Dubai"
-  | "Asia/Baku"
-  | "Asia/Karachi"
-  | "Asia/Tashkent"
-  | "Asia/Calcutta"
-  | "Asia/Dhaka"
-  | "Asia/Almaty"
-  | "Asia/Jakarta"
-  | "Asia/Bangkok"
-  | "Asia/Shanghai"
-  | "Asia/Singapore"
-  | "Asia/Tokyo"
-  | "Asia/Seoul"
-  | "Australia/Brisbane"
-  | "Australia/Sydney"
-  | "Pacific/Guam"
-  | "Pacific/Noumea"
-  | "Pacific/Auckland"
-  | "Pacific/Fiji";
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
 
 export interface Config {
   auth: {
@@ -72,10 +72,10 @@ export interface Config {
     customers: Customer;
     accounts: Account;
     media: Media;
-    "payload-kv": PayloadKv;
-    "payload-locked-documents": PayloadLockedDocument;
-    "payload-preferences": PayloadPreference;
-    "payload-migrations": PayloadMigration;
+    'payload-kv': PayloadKv;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -84,23 +84,19 @@ export interface Config {
     customers: CustomersSelect<false> | CustomersSelect<true>;
     accounts: AccountsSelect<false> | AccountsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
-    "payload-locked-documents":
-      | PayloadLockedDocumentsSelect<false>
-      | PayloadLockedDocumentsSelect<true>;
-    "payload-preferences":
-      | PayloadPreferencesSelect<false>
-      | PayloadPreferencesSelect<true>;
-    "payload-migrations": PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: string;
   };
   globals: {};
   globalsSelect: {};
-  locale: "en" | "bn-BD";
+  locale: 'en' | 'bn-BD';
   user: User & {
-    collection: "users";
+    collection: 'users';
   };
   jobs: {
     tasks: unknown;
@@ -135,11 +131,11 @@ export interface User {
   lastName: string;
   photoUrl?: string | null;
   companyName?: string | null;
-  taxRegNum?: string | null;
+  vatNumber?: string | null;
   country?: string | null;
   phone?: string | null;
   companyLogo?: (string | null) | Media;
-  role: "admin" | "user";
+  role: 'admin' | 'user';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -213,7 +209,7 @@ export interface Invoice {
   /**
    * Invoice status - ZATCA requires invoices cannot be deleted, only voided/cancelled
    */
-  status: "active" | "void" | "cancelled";
+  status: 'active' | 'void' | 'cancelled';
   customer: string | Customer;
   date: string;
   dueDate: string;
@@ -249,37 +245,37 @@ export interface Customer {
   /**
    * VAT registration number (if applicable)
    */
-  taxRegNum?: string | null;
+  vatNumber?: string | null;
   country?:
     | (
-        | "SA"
-        | "AE"
-        | "KW"
-        | "QA"
-        | "BH"
-        | "OM"
-        | "JO"
-        | "LB"
-        | "IQ"
-        | "SY"
-        | "YE"
-        | "PS"
-        | "EG"
-        | "SD"
-        | "LY"
-        | "TN"
-        | "DZ"
-        | "MA"
-        | "MR"
-        | "SO"
-        | "DJ"
-        | "KM"
+        | 'SA'
+        | 'AE'
+        | 'KW'
+        | 'QA'
+        | 'BH'
+        | 'OM'
+        | 'JO'
+        | 'LB'
+        | 'IQ'
+        | 'SY'
+        | 'YE'
+        | 'PS'
+        | 'EG'
+        | 'SD'
+        | 'LY'
+        | 'TN'
+        | 'DZ'
+        | 'MA'
+        | 'MR'
+        | 'SO'
+        | 'DJ'
+        | 'KM'
       )
     | null;
   /**
    * Customer's VAT registration status in Saudi Arabia
    */
-  vatTreatment: "not_registered" | "registered";
+  vatTreatment: 'not_registered' | 'registered';
   createdBy: string | User;
   updatedAt: string;
   createdAt: string;
@@ -320,28 +316,28 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
-        relationTo: "users";
+        relationTo: 'users';
         value: string | User;
       } | null)
     | ({
-        relationTo: "invoices";
+        relationTo: 'invoices';
         value: string | Invoice;
       } | null)
     | ({
-        relationTo: "customers";
+        relationTo: 'customers';
         value: string | Customer;
       } | null)
     | ({
-        relationTo: "accounts";
+        relationTo: 'accounts';
         value: string | Account;
       } | null)
     | ({
-        relationTo: "media";
+        relationTo: 'media';
         value: string | Media;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: string | User;
   };
   updatedAt: string;
@@ -354,7 +350,7 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: string;
   user: {
-    relationTo: "users";
+    relationTo: 'users';
     value: string | User;
   };
   key?: string | null;
@@ -390,7 +386,7 @@ export interface UsersSelect<T extends boolean = true> {
   lastName?: T;
   photoUrl?: T;
   companyName?: T;
-  taxRegNum?: T;
+  vatNumber?: T;
   country?: T;
   phone?: T;
   companyLogo?: T;
@@ -449,7 +445,7 @@ export interface InvoicesSelect<T extends boolean = true> {
  */
 export interface CustomersSelect<T extends boolean = true> {
   name?: T;
-  taxRegNum?: T;
+  vatNumber?: T;
   country?: T;
   vatTreatment?: T;
   createdBy?: T;
@@ -566,6 +562,7 @@ export interface Auth {
   [k: string]: unknown;
 }
 
-declare module "payload" {
+
+declare module 'payload' {
   export interface GeneratedTypes extends Config {}
 }
