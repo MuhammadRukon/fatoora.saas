@@ -34,16 +34,20 @@ export type UserData = {
   firstName: string;
   lastName: string;
   companyName?: string | null;
+  companyNameArabic?: string | null;
   vatNumber?: string | null;
   registrationNumber?: string | null;
   address?: {
     buildingNumber?: string;
     streetName?: string;
+    streetNameArabic?: string;
     district?: string;
+    districtArabic?: string;
     city?: string;
+    cityArabic?: string;
     postalCode?: string;
     country?: string;
-    additionalNumber?: string;
+    countryArabic?: string;
   } | null;
   phone?: string | null;
   photoUrl?: string | null;

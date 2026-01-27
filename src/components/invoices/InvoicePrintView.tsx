@@ -232,15 +232,30 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
   const formatAddress = (address?: {
     buildingNumber?: string;
     streetName?: string;
+    streetNameArabic?: string;
+    districtArabic?: string;
+    cityArabic?: string;
+    countryArabic?: string;
     district?: string;
     city?: string;
     postalCode?: string;
     country?: string;
-    additionalNumber?: string;
-  }) => {
+  }, language: 'arabic' | 'english' = 'english') => {
     if (!address) return "N/A";
 
-    const parts = [
+    let parts = [];
+    if(language === 'arabic') {
+      parts = [
+        address.buildingNumber,
+        address.streetNameArabic,
+        address.districtArabic,
+        address.cityArabic,
+        address.postalCode,
+        address.countryArabic,
+      ].filter(Boolean);
+    }
+    else {
+      parts = [
       address.buildingNumber,
       address.streetName,
       address.district,
@@ -249,8 +264,9 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
       address.country,
     ].filter(Boolean);
 
-    return parts.length > 0 ? parts.join(", ") : "N/A";
   };
+  return parts.length > 0 ? parts.join(", ") : "N/A";
+}
 
   if (isLoading) {
     return (
@@ -286,7 +302,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               <span> Vat Number: </span> {userData.vatNumber}
             </p>
           )}
-          {userData.phone && <p className="company-detail">{userData.phone}</p>}
+          {userData.phone && <p className="company-detail"><span> Phone Number: </span>{userData.phone}</p>}
         </div>
         <div className="company-logo">
           {userData.companyLogo?.url ? (
@@ -308,16 +324,18 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         </div>
         {/* arabic */}
         <div style={{ textAlign: "right" }} className="company-details">
-          <p className="company-name">{userData.companyName || "Company Name"}</p>
+          <p className="company-name">{userData.companyNameArabic || ""}</p>
           {userData.address && (
-            <p className="company-detail">{formatAddress(userData.address)}</p>
+            <p className="company-detail">{formatAddress(userData.address , 'arabic')}</p>
           )}
           {userData.vatNumber && (
             <p className="company-detail">
               <span> رقم ضريبة القيمة المضافة: </span> {userData.vatNumber}
             </p>
           )}
-          {userData.phone && <p className="company-detail">{userData.phone}</p>}
+          {userData.phone && <p className="company-detail">
+            <span>رقم التليفون: </span> {userData.phone}
+            </p>}
         </div>
       </div>
 

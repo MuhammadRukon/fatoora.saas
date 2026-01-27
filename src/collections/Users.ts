@@ -63,6 +63,11 @@ export const Users: CollectionConfig = {
       required: false,
     },
     {
+      name: "companyNameArabic",
+      type: "text",
+      required: false,
+    },
+    {
       name: "vatNumber",
       type: "text",
       required: false,
@@ -103,7 +108,15 @@ export const Users: CollectionConfig = {
           type: "text",
           label: "Street Name",
           admin: {
-            description: "Street name in Arabic or English",
+            description: "Street name in English",
+          },
+        },
+        {
+          name: "streetNameArabic",
+          type: "text",
+          label: "Street Name Arabic",
+          admin: {
+            description: "Street name in Arabic",
           },
         },
         {
@@ -115,11 +128,27 @@ export const Users: CollectionConfig = {
           },
         },
         {
+          name: "districtArabic",
+          type: "text",
+          label: "District Arabic",
+          admin: {
+            description: "District/Neighborhood name in Arabic",
+          },
+        },
+        {
           name: "city",
           type: "text",
           label: "City",
           admin: {
             description: "City name",
+          },
+        },
+        {
+          name: "cityArabic",
+          type: "text",
+          label: "City Arabic",
+          admin: {
+            description: "City name in Arabic",
           },
         },
         {
@@ -140,13 +169,14 @@ export const Users: CollectionConfig = {
           },
         },
         {
-          name: "additionalNumber",
+          name: "countryArabic",
           type: "text",
-          label: "Additional Number",
+          label: "Country Arabic",
+          defaultValue: "Saudi Arabia",
           admin: {
-            description: "Additional number (4 digits, optional)",
+            description: "Country name in Arabic (default: Saudi Arabia)",
           },
-        },
+        }
       ],
     },
     {

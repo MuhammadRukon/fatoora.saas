@@ -13,16 +13,20 @@ import { UserData } from "../container/container";
 
 interface CompanyInfoData {
   companyName: string;
+  companyNameArabic: string;
   vatNumber: string;
   registrationNumber: string;
   address: {
     buildingNumber: string;
     streetName: string;
+    streetNameArabic: string;
     district: string;
+    districtArabic: string;
     city: string;
+    cityArabic: string;
     postalCode: string;
     country: string;
-    additionalNumber: string;
+    countryArabic: string;
   };
   phone: string;
 }
@@ -43,16 +47,20 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
   const form = useForm<CompanyInfoData>({
     defaultValues: {
       companyName: company?.companyName || "",
+      companyNameArabic: company?.companyNameArabic || "",
       vatNumber: company?.vatNumber || "",
       registrationNumber: company?.registrationNumber || "",
       address: {
         buildingNumber: company?.address?.buildingNumber || "",
         streetName: company?.address?.streetName || "",
+        streetNameArabic: company?.address?.streetNameArabic || "",
         district: company?.address?.district || "",
+        districtArabic: company?.address?.districtArabic || "",
         city: company?.address?.city || "",
+        cityArabic: company?.address?.cityArabic || "",
         postalCode: company?.address?.postalCode || "",
         country: company?.address?.country || "Saudi Arabia",
-        additionalNumber: company?.address?.additionalNumber || "",
+        countryArabic: company?.address?.countryArabic || "Saudi Arabia",
       },
       phone: company?.phone || "",
     },
@@ -228,6 +236,17 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
 
               <FormField
                 control={form.control}
+                name="companyNameArabic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name (Arabic)</FormLabel>
+                    <Input {...field} placeholder="Enter company name in Arabic" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
@@ -242,7 +261,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 name="vatNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>VAT Registration Number</FormLabel>
+                    <FormLabel>VAT Number</FormLabel>
                     <Input {...field} placeholder="Enter 15-digit VAT number" />
                   </FormItem>
                 )}
@@ -253,7 +272,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 name="registrationNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Registration Number</FormLabel>
+                    <FormLabel>Commercial Registration Number</FormLabel>
                     <Input {...field} placeholder="Enter 10-digit CR number" />
                   </FormItem>
                 )}
@@ -285,40 +304,8 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="address.streetName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street Name</FormLabel>
-                    <Input {...field} placeholder="Enter street name" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="address.district"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>District</FormLabel>
-                    <Input {...field} placeholder="Enter district/neighborhood" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="address.city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <Input {...field} placeholder="Enter city" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
+              
+<FormField
                 control={form.control}
                 name="address.postalCode"
                 render={({ field }) => (
@@ -331,22 +318,88 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
 
               <FormField
                 control={form.control}
-                name="address.country"
+                name="address.streetName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <Input {...field} placeholder="Saudi Arabia" />
+                    <FormLabel>Street Name (English)</FormLabel>
+                    <Input {...field} placeholder="Enter street name" />
+                  </FormItem>
+                )}
+              />
+
+<FormField
+                control={form.control}
+                name="address.streetNameArabic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Name (Arabic)</FormLabel>
+                    <Input {...field} placeholder="Enter street name in Arabic" />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={form.control}
-                name="address.additionalNumber"
+                name="address.district"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Additional Number (Optional)</FormLabel>
-                    <Input {...field} placeholder="e.g., 5678" maxLength={4} />
+                    <FormLabel>District (English)</FormLabel>
+                    <Input {...field} placeholder="Enter district/neighborhood" />
+                  </FormItem>
+                )}
+              />
+
+<FormField
+                control={form.control}
+                name="address.districtArabic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>District (Arabic)</FormLabel>
+                    <Input {...field} placeholder="Enter district/neighborhood in Arabic" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City (English)</FormLabel>
+                    <Input {...field} placeholder="Enter city" />
+                  </FormItem>
+                )}
+              />
+
+<FormField
+                control={form.control}
+                name="address.cityArabic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City (Arabic)</FormLabel>
+                    <Input {...field} placeholder="Enter city in Arabic" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address.country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country (English)</FormLabel>
+                    <Input {...field} placeholder="Saudi Arabia" />
+                  </FormItem>
+                )}
+              />
+
+<FormField
+                control={form.control}
+                name="address.countryArabic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country (Arabic)</FormLabel>
+                    <Input {...field} placeholder="Enter country in Arabic" />
                   </FormItem>
                 )}
               />

@@ -133,6 +133,7 @@ export interface User {
   lastName: string;
   photoUrl?: string | null;
   companyName?: string | null;
+  companyNameArabic?: string | null;
   /**
    * 15-digit VAT registration number (e.g., 300000000000003)
    */
@@ -150,17 +151,29 @@ export interface User {
      */
     buildingNumber?: string | null;
     /**
-     * Street name in Arabic or English
+     * Street name in English
      */
     streetName?: string | null;
+    /**
+     * Street name in Arabic
+     */
+    streetNameArabic?: string | null;
     /**
      * District/Neighborhood name
      */
     district?: string | null;
     /**
+     * District/Neighborhood name in Arabic
+     */
+    districtArabic?: string | null;
+    /**
      * City name
      */
     city?: string | null;
+    /**
+     * City name in Arabic
+     */
+    cityArabic?: string | null;
     /**
      * 5-digit postal code (e.g., 12345)
      */
@@ -170,9 +183,9 @@ export interface User {
      */
     country?: string | null;
     /**
-     * Additional number (4 digits, optional)
+     * Country name in Arabic (default: Saudi Arabia)
      */
-    additionalNumber?: string | null;
+    countryArabic?: string | null;
   };
   phone?: string | null;
   companyLogo?: (string | null) | Media;
@@ -510,6 +523,7 @@ export interface UsersSelect<T extends boolean = true> {
   lastName?: T;
   photoUrl?: T;
   companyName?: T;
+  companyNameArabic?: T;
   vatNumber?: T;
   registrationNumber?: T;
   address?:
@@ -517,11 +531,14 @@ export interface UsersSelect<T extends boolean = true> {
     | {
         buildingNumber?: T;
         streetName?: T;
+        streetNameArabic?: T;
         district?: T;
+        districtArabic?: T;
         city?: T;
+        cityArabic?: T;
         postalCode?: T;
         country?: T;
-        additionalNumber?: T;
+        countryArabic?: T;
       };
   phone?: T;
   companyLogo?: T;

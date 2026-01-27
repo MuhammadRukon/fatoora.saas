@@ -204,6 +204,7 @@ export const Notes: CollectionConfig = {
             return "QR Code is mandatory for notes associated with Simplified Tax Invoices (B2C)";
           }
         } catch (error) {
+          console.error(error);
           // If invoice lookup fails, skip validation
           return true;
         }
@@ -364,4 +365,6 @@ export const Notes: CollectionConfig = {
     ],
   },
 };
+
+
 

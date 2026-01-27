@@ -5,18 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { EllipsisVertical, Eye, LucideTrash2, Plus } from "lucide-react";
+import { LucideTrash2, Plus } from "lucide-react";
 import { Combobox } from "../ui/combo-box";
 import { Label } from "../ui/label";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AccountCreateModal } from "../modal/AccountCreateModal";
 import { getAccounts, getInvoice } from "@/lib/server-functions";
 import { generateInvoiceQRCode } from "@/lib/qr-code-generator";
 import QRCode from "qrcode";
 import { UserData } from "../container/container";
-import { payload } from "@/lib/payload";
+import { AccountCreateModal } from "../modal/AccountCreateModal";
 
 interface RowEntry {
   description: string;
@@ -51,7 +50,6 @@ interface NoteFormProps {
 export function Note({ user, invoiceId }: NoteFormProps) {
   const router = useRouter();
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [openAccountModal, setOpenAccountModal] = useState(false);
   const [qrCodeDataURL, setQrCodeDataURL] = useState<string | null>(null);
@@ -605,11 +603,11 @@ export function Note({ user, invoiceId }: NoteFormProps) {
         </form>
       </Form>
 
-      {/* <AccountCreateModal
+  <AccountCreateModal
         open={openAccountModal}
         setOpen={setOpenAccountModal}
-        onSuccess={fetchAccounts}
-      /> */}
+        onAccountCreated={fetchAccounts}
+      />
     </div>
   );
 }
