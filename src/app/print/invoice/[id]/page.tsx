@@ -11,10 +11,5 @@ export default async function InvoicePrintPage({
   const { id } = await params;
   const user = await getCurrentUser();
 
-  return (
-    <InvoicePrintView
-      invoiceId={id}
-      userData={user as UserData}
-    />
-  );
+  return <InvoicePrintView invoiceId={id} userData={user as UserData} />;
 }

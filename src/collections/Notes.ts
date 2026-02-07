@@ -130,7 +130,8 @@ export const Notes: CollectionConfig = {
       type: "text",
       required: true,
       admin: {
-        description: "Reason for issuing this credit/debit note (e.g., 'Return of goods', 'Additional charges')",
+        description:
+          "Reason for issuing this credit/debit note (e.g., 'Return of goods', 'Additional charges')",
       },
     },
     {
@@ -197,7 +198,10 @@ export const Notes: CollectionConfig = {
         try {
           const invoice = await req.payload.findByID({
             collection: "invoices",
-            id: typeof noteData.originalInvoice === "string" ? noteData.originalInvoice : (noteData.originalInvoice as any).id,
+            id:
+              typeof noteData.originalInvoice === "string"
+                ? noteData.originalInvoice
+                : (noteData.originalInvoice as any).id,
           });
 
           if (invoice && (invoice as any).invoiceType === "simplified" && !value) {
@@ -365,6 +369,3 @@ export const Notes: CollectionConfig = {
     ],
   },
 };
-
-
-

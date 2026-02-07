@@ -34,8 +34,8 @@ export default async function NotesPage() {
         </Button>
       </div>
 
-      {notes.length === 0 ? (  
-          <p className="text-gray-500 text-lg mb-4">No notes found</p>
+      {notes.length === 0 ? (
+        <p className="text-gray-500 text-lg mb-4">No notes found</p>
       ) : (
         <div className="space-y-4">
           {notes.map((note: any) => (
@@ -43,9 +43,7 @@ export default async function NotesPage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-semibold">
-                      {note.noteNumber}
-                    </h3>
+                    <h3 className="text-lg font-semibold">{note.noteNumber}</h3>
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded ${
                         note.documentType === "credit"
@@ -63,7 +61,8 @@ export default async function NotesPage() {
                       : "Unknown"}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Date: {formatDate(note.date)} | Total: SAR {note.total?.toFixed(2) || "0.00"}
+                    Date: {formatDate(note.date)} | Total: SAR{" "}
+                    {note.total?.toFixed(2) || "0.00"}
                   </p>
                   {note.reason && (
                     <p className="text-sm text-gray-500 mt-1">{note.reason}</p>
@@ -82,4 +81,3 @@ export default async function NotesPage() {
     </div>
   );
 }
-

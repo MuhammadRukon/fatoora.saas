@@ -176,7 +176,7 @@ export const Users: CollectionConfig = {
           admin: {
             description: "Country name in Arabic (default: Saudi Arabia)",
           },
-        }
+        },
       ],
     },
     {

@@ -1,6 +1,10 @@
 import { InvoiceDisplay } from "@/components/invoices/InvoiceDisplay";
 import { InvoiceActions } from "@/components/invoices/InvoiceActions";
-import { getCurrentUser, getCurrentUserCompanyData, getNotesByInvoice } from "@/lib/server-functions";
+import {
+  getCurrentUser,
+  getCurrentUserCompanyData,
+  getNotesByInvoice,
+} from "@/lib/server-functions";
 import { payload } from "@/lib/payload";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -22,7 +26,7 @@ export default async function InvoiceDetailsPage({
   }
 
   const [invoiceResult, userData, notesResult] = await Promise.all([
-  payload.findByID({
+    payload.findByID({
       collection: "invoices",
       id,
       depth: 1,
@@ -45,8 +49,8 @@ export default async function InvoiceDetailsPage({
       },
     }),
 
-   getCurrentUserCompanyData(),
-   getNotesByInvoice(id),
+    getCurrentUserCompanyData(),
+    getNotesByInvoice(id),
   ]);
 
   const notes = notesResult.success ? notesResult.docs || [] : [];
@@ -68,15 +72,11 @@ export default async function InvoiceDetailsPage({
     notFound();
   }
 
-
   return (
     <div className="space-y-6">
       <InvoiceActions invoiceId={id} />
-      <InvoiceDisplay
-        invoice={invoiceResult as any}
-        userData={userData as UserData}
-      />
-      
+      <InvoiceDisplay invoice={invoiceResult as any} userData={userData as UserData} />
+
       {/* Related Notes Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -85,7 +85,7 @@ export default async function InvoiceDetailsPage({
             <Link href={`/notes/create?invoiceId=${id}`}>Create Note</Link>
           </Button>
         </div>
-        
+
         {notes.length === 0 ? (
           <Card className="p-6 text-center">
             <p className="text-gray-500">No credit or debit notes for this invoice</p>
@@ -113,7 +113,8 @@ export default async function InvoiceDetailsPage({
                       </span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Date: {formatDate(note.date)} | Total: SAR {note.total?.toFixed(2) || "0.00"}
+                      Date: {formatDate(note.date)} | Total: SAR{" "}
+                      {note.total?.toFixed(2) || "0.00"}
                     </p>
                     {note.reason && (
                       <p className="text-sm text-gray-500 mt-1">{note.reason}</p>

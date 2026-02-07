@@ -1,5 +1,9 @@
 import { NoteDisplay } from "@/components/notes/NoteDisplay";
-import { getCurrentUser, getCurrentUserCompanyData, getNote } from "@/lib/server-functions";
+import {
+  getCurrentUser,
+  getCurrentUserCompanyData,
+  getNote,
+} from "@/lib/server-functions";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,4 +58,3 @@ export default async function NoteDetailsPage({
     </div>
   );
 }
-

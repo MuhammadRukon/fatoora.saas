@@ -185,6 +185,7 @@ export async function updateCustomer(
     vatNumber?: string;
     country?: string;
     vatTreatment: string;
+    branch?: string;
     address?: {
       buildingNumber?: string;
       streetName?: string;
@@ -209,6 +210,7 @@ export async function updateCustomer(
         vatNumber: data.vatNumber,
         country: data.country,
         vatTreatment: data.vatTreatment,
+        branch: data.branch,
         address: data.address,
       } as any,
     });
@@ -246,6 +248,7 @@ export async function createCustomer(data: {
   vatNumber?: string;
   country?: string;
   vatTreatment: string;
+  branch?: string;
   address?: {
     buildingNumber?: string;
     streetName?: string;
@@ -268,6 +271,7 @@ export async function createCustomer(data: {
         vatNumber: data.vatNumber,
         country: data.country,
         vatTreatment: data.vatTreatment,
+        branch: data.branch,
         address: data.address,
         createdBy: user.id,
       } as any,

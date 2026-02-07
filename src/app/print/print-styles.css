@@ -33,7 +33,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
 .invoice-details {
@@ -43,9 +44,15 @@ body {
 .invoice-title {
   border-top: 2px solid #e5e7eb;
   padding-top: 5px;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   color: #111827;
+}
+
+.invoice-details-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
 }
 
 .invoice-detail-row {
@@ -66,10 +73,18 @@ body {
 }
 
 .invoice-detail-label {
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: 0.5px;
   font-weight: 600;
+  font-size: 13px;
   margin-bottom: 4px;
+}
+
+.invoice-detail-value {
+  line-height: 1.4;
+  white-space: nowrap;
+  font-size: 13px;
+  padding: 4px 0;
 }
 
 .company-details {
@@ -104,7 +119,7 @@ body {
 }
 /* Items Section */
 .items-section {
-  margin-top: 30px;
+  margin-top: 12px;
 }
 
 .items-header {
@@ -124,19 +139,19 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  background-color: #f8f8f8;
 }
 
 .items-table thead {
-  background: #f9fafb;
   border-bottom: 2px solid #e5e7eb;
 }
 
 .items-table th {
-  padding: 14px 16px;
+  padding: 8px 10px;
   text-align: left;
   font-weight: 600;
   color: #374151;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .items-table th.text-center {
@@ -149,7 +164,6 @@ body {
 
 .items-table tbody tr {
   border-bottom: 1px solid #f3f4f6;
-  background: #f9fafb;
 }
 
 .items-table tbody tr:last-child {
@@ -157,7 +171,7 @@ body {
 }
 
 .items-table td {
-  padding: 14px 16px;
+  padding: 8px 10px;
   color: #111827;
 }
 
@@ -177,12 +191,18 @@ body {
   color: #4b5563;
 }
 
+.font-arabic {
+  font-family: var(--font-naksh-arabic), var(--font-noto-arabic), sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 /* Summary Section */
 .summary-section {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 30px;
+  margin-top: 16px;
 }
 
 .qr-code-container {
@@ -207,6 +227,7 @@ body {
 .summary-box {
   min-width: 280px;
   margin-left: auto;
+  margin-right: 6px;
 }
 
 .summary-row {

@@ -40,6 +40,7 @@ export interface CustomerFormData {
   vatNumber?: string;
   country?: string;
   vatTreatment: string;
+  branch?: string;
   address: {
     buildingNumber?: string;
     streetName?: string;
@@ -124,24 +125,38 @@ export function CustomerForm({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Country</FormLabel>
-              <Combobox
-                placeholder="Select country"
-                options={ARAB_COUNTRIES}
-                value={field.value || ""}
-                onChange={field.onChange}
-                showCreateButton={false}
-                isSearchEnabled={true}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <Combobox
+                  placeholder="Select country"
+                  options={ARAB_COUNTRIES}
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  showCreateButton={false}
+                  isSearchEnabled={true}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="branch"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Branch Name</FormLabel>
+                <Input {...field} placeholder="Enter branch name" disabled={disabled} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* Address Section */}
         <div className="pt-4 border-t">
@@ -354,5 +369,3 @@ export function CustomerForm({
     </Form>
   );
 }
-
-

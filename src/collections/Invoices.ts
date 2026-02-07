@@ -175,8 +175,7 @@ export const Invoices: CollectionConfig = {
         description:
           "QR code data URL (base64 image) - ZATCA Phase 1: Mandatory for Simplified invoices, optional for Standard invoices",
       },
-      validate: (value, { data  }) => {
-     
+      validate: (value, { data }) => {
         if ((data as Invoice).invoiceType === "simplified" && !value) {
           return "QR Code is mandatory for Simplified Tax Invoices (B2C)";
         }

@@ -15,6 +15,3 @@ export default async function NotePrintPage({
 
   return <NotePrintView noteId={id} userData={userData as any} />;
 }
-
-
-

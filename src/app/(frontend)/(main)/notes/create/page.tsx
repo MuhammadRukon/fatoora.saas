@@ -19,4 +19,3 @@ export default async function CreateNotePage({
 
   return <Note user={userData as unknown as UserData} invoiceId={invoiceId} />;
 }
-

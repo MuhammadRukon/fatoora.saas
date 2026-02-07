@@ -20,6 +20,7 @@ interface Invoice {
   customer: {
     id: string;
     name: string;
+    branch?: string;
     address?: {
       buildingNumber?: string;
       streetName?: string;
@@ -39,8 +40,6 @@ interface Invoice {
   total: number;
   qrCodeData?: string;
 }
-
-
 
 interface InvoicePrintViewProps {
   invoiceId: string;
@@ -161,7 +160,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
 
           // Handle print dialog close/cancel
           const handleAfterPrint = () => {
-            redirectBack();
+            // redirectBack();
             window.removeEventListener("afterprint", handleAfterPrint);
           };
 
@@ -171,7 +170,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           // Fallback for older browsers - check if print dialog is still open
           // This is a workaround since afterprint might not fire in all cases
           setTimeout(() => {
-            redirectBack();
+            // redirectBack();
           }, 500);
         }, 500);
       } else if (downloadPDF) {
@@ -229,22 +228,25 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
     return baseAmount;
   };
 
-  const formatAddress = (address?: {
-    buildingNumber?: string;
-    streetName?: string;
-    streetNameArabic?: string;
-    districtArabic?: string;
-    cityArabic?: string;
-    countryArabic?: string;
-    district?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-  }, language: 'arabic' | 'english' = 'english') => {
+  const formatAddress = (
+    address?: {
+      buildingNumber?: string;
+      streetName?: string;
+      streetNameArabic?: string;
+      districtArabic?: string;
+      cityArabic?: string;
+      countryArabic?: string;
+      district?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+    },
+    language: "arabic" | "english" = "english"
+  ) => {
     if (!address) return "N/A";
 
     let parts = [];
-    if(language === 'arabic') {
+    if (language === "arabic") {
       parts = [
         address.buildingNumber,
         address.streetNameArabic,
@@ -253,20 +255,18 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         address.postalCode,
         address.countryArabic,
       ].filter(Boolean);
-    }
-    else {
+    } else {
       parts = [
-      address.buildingNumber,
-      address.streetName,
-      address.district,
-      address.city,
-      address.postalCode,
-      address.country,
-    ].filter(Boolean);
-
+        address.buildingNumber,
+        address.streetName,
+        address.district,
+        address.city,
+        address.postalCode,
+        address.country,
+      ].filter(Boolean);
+    }
+    return parts.length > 0 ? parts.join(", ") : "N/A";
   };
-  return parts.length > 0 ? parts.join(", ") : "N/A";
-}
 
   if (isLoading) {
     return (
@@ -302,7 +302,12 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               <span> Vat Number: </span> {userData.vatNumber}
             </p>
           )}
-          {userData.phone && <p className="company-detail"><span> Phone Number: </span>{userData.phone}</p>}
+          {userData.registrationNumber && (
+            <p className="company-detail">
+              <span>Commercial Registration Number: </span>
+              {userData.registrationNumber}
+            </p>
+          )}
         </div>
         <div className="company-logo">
           {userData.companyLogo?.url ? (
@@ -324,66 +329,50 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         </div>
         {/* arabic */}
         <div style={{ textAlign: "right" }} className="company-details">
-          <p className="company-name">{userData.companyNameArabic || ""}</p>
+          <p className="company-name font-arabic" style={{ fontSize: "17px" }}>
+            {userData.companyNameArabic || ""}
+          </p>
           {userData.address && (
-            <p className="company-detail">{formatAddress(userData.address , 'arabic')}</p>
+            <p className="company-detail font-arabic">
+              {formatAddress(userData.address, "arabic")}
+            </p>
           )}
           {userData.vatNumber && (
             <p className="company-detail">
-              <span> رقم ضريبة القيمة المضافة: </span> {userData.vatNumber}
+              <span className="font-arabic"> رقم ضريبة القيمة المضافة: </span>{" "}
+              {userData.vatNumber}
             </p>
           )}
-          {userData.phone && <p className="company-detail">
-            <span>رقم التليفون: </span> {userData.phone}
-            </p>}
+          {userData.registrationNumber && (
+            <p className="company-detail">
+              <span className="font-arabic"> رقم التجارة: </span>
+              {userData.registrationNumber}
+            </p>
+          )}
         </div>
       </div>
 
       {/* Invoice Title and Details */}
       <div className="invoice-details">
         <h1 className="invoice-title">
-          {invoice.invoiceType === "standard" ? "Tax Invoice" : "Simplified Tax Invoice"}{" "}
-          <span>
-            {invoice.invoiceType === "standard" ? "فاتورة ضريبية" : "فاتورة ضريبية مبسطة"}
+          {invoice.invoiceType === "standard" ? "Standard Tax Invoice" : "Tax Invoice"}
+
+          <span className="font-arabic" style={{ fontSize: "26px", marginLeft: "12px" }}>
+            {invoice.invoiceType === "standard"
+              ? "فاتورة ضريبية نموذجية"
+              : "فاتورة ضريبية"}
           </span>
         </h1>
         <div>
           <div className="invoice-detail-row">
             <div className="invoice-detail-label" style={{ textAlign: "left" }}>
-              Invoice Number
-            </div>
-            <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
-            <div className="invoice-detail-label" style={{ textAlign: "right" }}>
-              رقم الفاتورة
-            </div>
-          </div>
-
-          <div className="invoice-detail-row">
-            <div className="invoice-detail-label" style={{ textAlign: "left" }}>
-              Date
-            </div>
-            <div className="invoice-detail-value">{formatDate(invoice.date)}</div>
-            <div className="invoice-detail-label" style={{ textAlign: "right" }}>
-              تاريخ
-            </div>
-          </div>
-
-          <div className="invoice-detail-row">
-            <div className="invoice-detail-label" style={{ textAlign: "left" }}>
-              Due Date
-            </div>
-            <div className="invoice-detail-value">{formatDate(invoice.dueDate)}</div>
-            <div className="invoice-detail-label" style={{ textAlign: "right" }}>
-              تاريخ الاستحقاق
-            </div>
-          </div>
-
-          <div className="invoice-detail-row">
-            <div className="invoice-detail-label" style={{ textAlign: "left" }}>
               Customer
             </div>
-            <div className="invoice-detail-value">{invoice.customer.name}</div>
-            <div className="invoice-detail-label" style={{ textAlign: "right" }}>
+            <div className="invoice-detail-value">{invoice.customer.name || "N/A"}</div>
+            <div
+              className="invoice-detail-label  font-arabic"
+              style={{ textAlign: "right" }}
+            >
               العميل
             </div>
           </div>
@@ -393,10 +382,97 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               Address
             </div>
             <div className="invoice-detail-value">
-              {formatAddress(invoice.customer.address)}
+              {formatAddress(invoice.customer.address) || "N/A"}
             </div>
-            <div className="invoice-detail-label" style={{ textAlign: "right" }}>
+            <div
+              className="invoice-detail-label  font-arabic"
+              style={{ textAlign: "right" }}
+            >
               العنوان
+            </div>
+          </div>
+
+          {invoice.customer.branch && (
+            <div className="invoice-detail-row">
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                Branch
+              </div>
+              <div className="invoice-detail-value">{invoice.customer.branch}</div>
+              <div
+                className="invoice-detail-label  font-arabic"
+                style={{ textAlign: "right" }}
+              >
+                الفرع
+              </div>
+            </div>
+          )}
+
+          <div className="invoice-details-container">
+          <div>  <div
+              style={{ borderBottom: "1px solid #e5e7eb", borderRight: "none" }}
+              className="invoice-detail-row"
+            >
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                Invoice No.
+              </div>
+              <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
+              <div
+                className="invoice-detail-label  font-arabic"
+                style={{ textAlign: "right" }}
+              >
+                رقم الفاتورة
+              </div>
+            </div>
+
+            <div style={{borderTop: 'none'}} className="invoice-detail-row">
+                <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                  Due Date
+                </div>
+                <div className="invoice-detail-value">
+                  {formatDate(invoice.dueDate) || "N/A"}
+                </div>
+                <div
+                  className="invoice-detail-label  font-arabic"
+                  style={{ textAlign: "right" }}
+                >
+                  تاريخ الاستحقاق
+                </div>
+              </div>
+{/* 
+            <div
+              style={{ borderTop: 'none', borderBottom: "1px solid #e5e7eb", borderRight: "none" }}
+              className="invoice-detail-row"
+            >
+              <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                Postal Code
+              </div>
+              <div className="invoice-detail-value">{invoice.customer.address?.postalCode}</div>
+              <div
+                className="invoice-detail-label  font-arabic"
+                style={{ textAlign: "right" }}
+              >
+                الرمز البريدي
+              </div>
+            </div> */}
+            </div>
+
+            <div>
+              <div
+                className="invoice-detail-row"
+              >
+                <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                  Date
+                </div>
+                <div className="invoice-detail-value">
+                  {formatDate(invoice.date) || "N/A"}
+                </div>
+                <div
+                  className="invoice-detail-label  font-arabic"
+                  style={{ textAlign: "right" }}
+                >
+                  تاريخ
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -408,25 +484,47 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           <thead>
             <tr>
               <th>
-                No. <span style={{ display: "block" }}>الرقم</span>
+                No.{" "}
+                <span className=" font-arabic" style={{ display: "block" }}>
+                  الرقم
+                </span>
               </th>
               <th>
-                Description <span style={{ display: "block" }}>الوصف</span>
+                Description{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                  الوصف
+                </span>
               </th>
-              <th>
-                Account <span style={{ display: "block" }}>الحساب</span>
-              </th>
+              {/* <th>
+                Account{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                  الحساب
+                </span>
+              </th> */}
               <th className="text-center">
-                Qty <span style={{ display: "block" }}>الكمية</span>
+                Qty{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                  الكمية
+                </span>
               </th>
               <th className="text-right">
-                Price <span style={{ display: "block" }}>السعر</span>
+                Price{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                  السعر
+                </span>
               </th>
               <th className="text-right">
-                Tax Rate <span style={{ display: "block" }}> القيمة المضافة</span>
+                Vat{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                  {" "}
+                  القيمة المضافة
+                </span>
               </th>
               <th className="text-right">
-                Total <span style={{ display: "block" }}>المجموع</span>
+                Amount{" "}
+                <span className="font-arabic" style={{ display: "block" }}>
+                كمية
+                </span>
               </th>
             </tr>
           </thead>
@@ -435,10 +533,13 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{item.description}</td>
-                <td>{item.account}</td>
-                <td>{item.quantity}</td>
-                <td>{item.price.toFixed(2)}</td>
-                <td className="text-center">{item.taxRate}%</td>
+                {/* <td>{item.account}</td> */}
+                <td style={{ textAlign: "center" }}>{item.quantity}</td>
+                <td style={{ textAlign: "right" }}>{item.price.toFixed(2)}</td>
+                <td className="text-right">
+                  {+calculateLineTotal(item).toFixed(2) - +item.price.toFixed(2)}{" "}
+                  <span style={{ color: "#374151" }}>({item.taxRate}%)</span>
+                </td>
                 <td className="text-right font-medium" style={{ color: "#111827" }}>
                   {calculateLineTotal(item).toFixed(2)}
                 </td>
@@ -470,21 +571,26 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
         <div className="summary-box">
           <div className="summary-row">
             <p className="summary-label">
-              Subtotal <span style={{ display: "block" }}>المجموع الفرعي</span>
+              Subtotal{" "}
+              <span className="font-arabic" style={{ display: "block" }}>
+                المجموع الفرعي
+              </span>
             </p>
             <p className="summary-value">SAR {invoice.subtotal.toFixed(2)}</p>
           </div>
           <div className="summary-row">
             <p className="summary-label">
               Total VAT{" "}
-              <span style={{ display: "block" }}>إجمالي ضريبة القيمة المضافة</span>
+              <span className="font-arabic" style={{ display: "block" }}>
+                إجمالي ضريبة القيمة المضافة
+              </span>
             </p>
             <p className="summary-value">SAR {invoice.totalTax.toFixed(2)}</p>
           </div>
           <div className="summary-row">
             <p style={{ marginRight: "10px" }}>
               Total including VAT{" "}
-              <span style={{ display: "block" }}>
+              <span className="font-arabic" style={{ display: "block" }}>
                 الإجمالي شاملاً ضريبة القيمة المضافة
               </span>
             </p>

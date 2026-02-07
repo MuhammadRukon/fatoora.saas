@@ -64,9 +64,7 @@ export function Note({ user, invoiceId }: NoteFormProps) {
       date: new Date().toISOString().split("T")[0],
       dueDate: new Date().toISOString().split("T")[0],
       reason: "",
-      rowEntries: [
-        { description: "", account: "", quantity: 1, price: 0, taxRate: 15 },
-      ],
+      rowEntries: [{ description: "", account: "", quantity: 1, price: 0, taxRate: 15 }],
       pricesExcludeTax: true,
       discountTotal: 0,
     },
@@ -112,21 +110,30 @@ export function Note({ user, invoiceId }: NoteFormProps) {
             const inv = result.invoice as any;
             setOriginalInvoice(inv);
             setInvoiceType(inv.invoiceType || "simplified");
-            
+
             // Pre-fill form with invoice data
-            form.setValue("customer", typeof inv.customer === "object" ? inv.customer.id : inv.customer);
+            form.setValue(
+              "customer",
+              typeof inv.customer === "object" ? inv.customer.id : inv.customer
+            );
             form.setValue("date", inv.date || new Date().toISOString().split("T")[0]);
-            form.setValue("dueDate", inv.dueDate || new Date().toISOString().split("T")[0]);
-            
+            form.setValue(
+              "dueDate",
+              inv.dueDate || new Date().toISOString().split("T")[0]
+            );
+
             // Pre-fill row entries from invoice (for reference, user can modify)
             if (inv.rowEntries && inv.rowEntries.length > 0) {
-              form.setValue("rowEntries", inv.rowEntries.map((entry: any) => ({
-                description: entry.description || "",
-                account: entry.account || "",
-                quantity: entry.quantity || 1,
-                price: entry.price || 0,
-                taxRate: entry.taxRate || 15,
-              })));
+              form.setValue(
+                "rowEntries",
+                inv.rowEntries.map((entry: any) => ({
+                  description: entry.description || "",
+                  account: entry.account || "",
+                  quantity: entry.quantity || 1,
+                  price: entry.price || 0,
+                  taxRate: entry.taxRate || 15,
+                }))
+              );
             }
           }
         } catch (error) {
@@ -222,7 +229,9 @@ export function Note({ user, invoiceId }: NoteFormProps) {
     try {
       // Validate QR code for simplified invoices
       if (invoiceType === "simplified" && !qrCodeDataURL) {
-        alert("QR Code is mandatory for notes associated with Simplified Tax Invoices (B2C). Please generate QR code first.");
+        alert(
+          "QR Code is mandatory for notes associated with Simplified Tax Invoices (B2C). Please generate QR code first."
+        );
         setIsSaving(false);
         return;
       }
@@ -306,10 +315,7 @@ export function Note({ user, invoiceId }: NoteFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Document Type *</FormLabel>
-                  <select
-                    {...field}
-                    className="w-full px-3 py-2 border rounded-md"
-                  >
+                  <select {...field} className="w-full px-3 py-2 border rounded-md">
                     <option value="credit">Credit Note</option>
                     <option value="debit">Debit Note</option>
                   </select>
@@ -331,7 +337,10 @@ export function Note({ user, invoiceId }: NoteFormProps) {
                     <option value="">Select Invoice</option>
                     {invoices.map((inv) => (
                       <option key={inv.id} value={inv.id}>
-                        {inv.invoiceNumber} - {typeof inv.customer === "object" ? inv.customer.name : "Customer"}
+                        {inv.invoiceNumber} -{" "}
+                        {typeof inv.customer === "object"
+                          ? inv.customer.name
+                          : "Customer"}
                       </option>
                     ))}
                   </select>
@@ -380,9 +389,11 @@ export function Note({ user, invoiceId }: NoteFormProps) {
           {originalInvoice && (
             <div className="p-4 bg-blue-50 rounded-md">
               <p className="text-sm text-blue-800">
-                <strong>Original Invoice:</strong> {originalInvoice.invoiceNumber} 
+                <strong>Original Invoice:</strong> {originalInvoice.invoiceNumber}
                 {" - "}
-                {originalInvoice.invoiceType === "standard" ? "Standard Tax Invoice (B2B/B2G)" : "Simplified Tax Invoice (B2C)"}
+                {originalInvoice.invoiceType === "standard"
+                  ? "Standard Tax Invoice (B2B/B2G)"
+                  : "Simplified Tax Invoice (B2C)"}
               </p>
             </div>
           )}
@@ -395,7 +406,13 @@ export function Note({ user, invoiceId }: NoteFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  append({ description: "", account: "", quantity: 1, price: 0, taxRate: 15 })
+                  append({
+                    description: "",
+                    account: "",
+                    quantity: 1,
+                    price: 0,
+                    taxRate: 15,
+                  })
                 }
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -466,9 +483,14 @@ export function Note({ user, invoiceId }: NoteFormProps) {
                             { label: "10% VAT", value: "10" },
                             { label: "0% VAT", value: "0" },
                           ]}
-                          value={String(form.watch(`rowEntries.${index}.taxRate`) || "15")}
+                          value={String(
+                            form.watch(`rowEntries.${index}.taxRate`) || "15"
+                          )}
                           onChange={(value) =>
-                            form.setValue(`rowEntries.${index}.taxRate`, parseFloat(value))
+                            form.setValue(
+                              `rowEntries.${index}.taxRate`,
+                              parseFloat(value)
+                            )
                           }
                           placeholder="VAT %"
                           showCreateButton={false}
@@ -586,7 +608,8 @@ export function Note({ user, invoiceId }: NoteFormProps) {
             {invoiceType === "simplified" && !qrCodeDataURL && (
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                 <p className="text-sm text-yellow-800">
-                  ⚠️ QR Code is mandatory for notes associated with Simplified Tax Invoices (B2C)
+                  ⚠️ QR Code is mandatory for notes associated with Simplified Tax
+                  Invoices (B2C)
                 </p>
               </div>
             )}
@@ -603,7 +626,7 @@ export function Note({ user, invoiceId }: NoteFormProps) {
         </form>
       </Form>
 
-  <AccountCreateModal
+      <AccountCreateModal
         open={openAccountModal}
         setOpen={setOpenAccountModal}
         onAccountCreated={fetchAccounts}
@@ -611,4 +634,3 @@ export function Note({ user, invoiceId }: NoteFormProps) {
     </div>
   );
 }
-

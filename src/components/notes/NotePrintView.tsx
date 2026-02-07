@@ -190,9 +190,10 @@ export function NotePrintView({ noteId, userData }: NotePrintViewProps) {
               {note.documentType === "credit" ? "Credit Note" : "Debit Note"}
             </h1>
             <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
-              {typeof note.originalInvoice === "object" && note.originalInvoice.invoiceType === "standard"
+              {typeof note.originalInvoice === "object" &&
+              note.originalInvoice.invoiceType === "standard"
                 ? "Standard Tax Invoice Note (B2B/B2G)"
-                : "Simplified Tax Invoice Note (B2C)"}
+                : "Tax Invoice Note"}
             </p>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
               <div>
@@ -351,6 +352,3 @@ export function NotePrintView({ noteId, userData }: NotePrintViewProps) {
     </div>
   );
 }
-
-
-

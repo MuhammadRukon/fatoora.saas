@@ -101,7 +101,7 @@ export default async function InvoicesList() {
                     <div className="flex gap-2 justify-end">
                       <Button variant="outline" size="sm" asChild>
                         <Link prefetch href={`/invoices/${invoice.id}`}>
-                        <Eye />
+                          <Eye />
                         </Link>
                       </Button>
                     </div>

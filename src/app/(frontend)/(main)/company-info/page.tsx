@@ -9,9 +9,7 @@ export default async function CompanyInfoPage() {
     <>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Company Information</h1>
       <div className="max-w-4xl mx-auto">
-        <CompanyInfoForm
-          company={user as UserData}
-        />
+        <CompanyInfoForm company={user as UserData} />
       </div>
     </>
   );

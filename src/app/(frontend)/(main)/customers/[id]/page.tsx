@@ -1,8 +1,10 @@
+import { CustomerViewUpdate } from "@/components/customer/CustomerViewUpdate";
+import { payload } from "@/lib/payload";
 import { getCurrentUser } from "@/lib/server-functions";
 
 import { notFound } from "next/navigation";
 
-export default async function InvoiceDetailsPage({
+export default async function CustomerViewUpdatePage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -14,5 +16,12 @@ export default async function InvoiceDetailsPage({
     notFound();
   }
 
-  return <div className="space-y-6">Details Page for Customer {id}</div>;
+  const customer = await payload.findByID({
+    collection: "customers",
+    id,
+    overrideAccess: false,
+    user: user,
+  });
+
+  return <CustomerViewUpdate customer={customer} />;
 }

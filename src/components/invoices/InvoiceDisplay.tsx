@@ -19,6 +19,7 @@ interface Invoice {
   customer: {
     id: string;
     name: string;
+    branch?: string;
     address?: {
       buildingNumber?: string;
       streetName?: string;
@@ -38,7 +39,6 @@ interface Invoice {
   total: number;
   qrCodeData?: string;
 }
-
 
 interface InvoiceDisplayProps {
   invoice: Invoice;
@@ -90,7 +90,7 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
             <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
               {invoice.invoiceType === "standard"
                 ? "Standard Tax Invoice (B2B/B2G)"
-                : "Simplified Tax Invoice (B2C)"}
+                : "Tax Invoice"}
             </p>
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
               <div>
@@ -127,6 +127,16 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
                   {formatDate(invoice.dueDate)}
                 </p>
               </div>
+              {invoice.customer.branch && (
+                <div>
+                  <Label className="text-xs text-gray-500 uppercase tracking-wide">
+                    Branch
+                  </Label>
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
+                    {invoice.customer.branch || "N/A"}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

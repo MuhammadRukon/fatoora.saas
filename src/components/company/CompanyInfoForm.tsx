@@ -304,8 +304,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-              
-<FormField
+              <FormField
                 control={form.control}
                 name="address.postalCode"
                 render={({ field }) => (
@@ -327,7 +326,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-<FormField
+              <FormField
                 control={form.control}
                 name="address.streetNameArabic"
                 render={({ field }) => (
@@ -349,13 +348,16 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-<FormField
+              <FormField
                 control={form.control}
                 name="address.districtArabic"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>District (Arabic)</FormLabel>
-                    <Input {...field} placeholder="Enter district/neighborhood in Arabic" />
+                    <Input
+                      {...field}
+                      placeholder="Enter district/neighborhood in Arabic"
+                    />
                   </FormItem>
                 )}
               />
@@ -371,7 +373,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-<FormField
+              <FormField
                 control={form.control}
                 name="address.cityArabic"
                 render={({ field }) => (
@@ -393,7 +395,7 @@ export function CompanyInfoForm({ company }: { company: UserData }) {
                 )}
               />
 
-<FormField
+              <FormField
                 control={form.control}
                 name="address.countryArabic"
                 render={({ field }) => (

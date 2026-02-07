@@ -31,6 +31,7 @@ export function CustomerCreateModal({
       name: "",
       vatNumber: "",
       country: "",
+      branch: "",
       vatTreatment: "not_registered",
       address: {
         buildingNumber: "",
@@ -53,6 +54,7 @@ export function CustomerCreateModal({
         vatNumber: data.vatNumber?.trim() || undefined,
         country: data.country || undefined,
         vatTreatment: data.vatTreatment,
+        branch: data.branch || undefined,
         address: {
           buildingNumber: data.address.buildingNumber?.trim() || undefined,
           streetName: data.address.streetName?.trim() || undefined,

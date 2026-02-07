@@ -66,6 +66,7 @@ export function CustomerViewUpdateModal({
             name: c?.name || "",
             vatNumber: c?.vatNumber || "",
             country: c?.country || "",
+            branch: c?.branch || "",
             vatTreatment: c?.vatTreatment || "not_registered",
             address: {
               buildingNumber: c?.address?.buildingNumber || "",
@@ -112,6 +113,7 @@ export function CustomerViewUpdateModal({
         vatNumber: data.vatNumber?.trim() || undefined,
         country: data.country || undefined,
         vatTreatment: data.vatTreatment,
+        branch: data.branch || undefined,
         address: {
           buildingNumber: data.address.buildingNumber?.trim() || undefined,
           streetName: data.address.streetName?.trim() || undefined,
