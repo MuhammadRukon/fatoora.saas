@@ -39,17 +39,17 @@ export function CustomerViewUpdate({ customer }: { customer: Customer }) {
     try {
       const payload = {
         name: data.name.trim(),
-        vatNumber: data.vatNumber?.trim() || '',
+        vatNumber: data.vatNumber?.trim() || "",
         country: data.country || undefined,
         vatTreatment: data.vatTreatment,
-        branch: data.branch || '',
+        branch: data.branch || "",
         address: {
-          buildingNumber: data.address.buildingNumber?.trim() || '',
-          streetName: data.address.streetName?.trim() || '',
-          district: data.address.district?.trim() || '',
-          city: data.address.city?.trim() || '',
-          postalCode: data.address.postalCode?.trim() || '',
-          additionalNumber: data.address.additionalNumber?.trim() || '',
+          buildingNumber: data.address.buildingNumber?.trim() || "",
+          streetName: data.address.streetName?.trim() || "",
+          district: data.address.district?.trim() || "",
+          city: data.address.city?.trim() || "",
+          postalCode: data.address.postalCode?.trim() || "",
+          additionalNumber: data.address.additionalNumber?.trim() || "",
         },
       };
 

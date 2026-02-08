@@ -408,23 +408,24 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
           )}
 
           <div className="invoice-details-container">
-          <div>  <div
-              style={{ borderBottom: "1px solid #e5e7eb", borderRight: "none" }}
-              className="invoice-detail-row"
-            >
-              <div className="invoice-detail-label" style={{ textAlign: "left" }}>
-                Invoice No.
-              </div>
-              <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
+            <div>
+              {" "}
               <div
-                className="invoice-detail-label  font-arabic"
-                style={{ textAlign: "right" }}
+                style={{ borderBottom: "1px solid #e5e7eb", borderRight: "none" }}
+                className="invoice-detail-row"
               >
-                رقم الفاتورة
+                <div className="invoice-detail-label" style={{ textAlign: "left" }}>
+                  Invoice No.
+                </div>
+                <div className="invoice-detail-value">{invoice.invoiceNumber}</div>
+                <div
+                  className="invoice-detail-label  font-arabic"
+                  style={{ textAlign: "right" }}
+                >
+                  رقم الفاتورة
+                </div>
               </div>
-            </div>
-
-            <div style={{borderTop: 'none'}} className="invoice-detail-row">
+              <div style={{ borderTop: "none" }} className="invoice-detail-row">
                 <div className="invoice-detail-label" style={{ textAlign: "left" }}>
                   Due Date
                 </div>
@@ -438,7 +439,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
                   تاريخ الاستحقاق
                 </div>
               </div>
-{/* 
+              {/* 
             <div
               style={{ borderTop: 'none', borderBottom: "1px solid #e5e7eb", borderRight: "none" }}
               className="invoice-detail-row"
@@ -457,9 +458,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
             </div>
 
             <div>
-              <div
-                className="invoice-detail-row"
-              >
+              <div className="invoice-detail-row">
                 <div className="invoice-detail-label" style={{ textAlign: "left" }}>
                   Date
                 </div>
@@ -523,7 +522,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
               <th className="text-right">
                 Amount{" "}
                 <span className="font-arabic" style={{ display: "block" }}>
-                كمية
+                  كمية
                 </span>
               </th>
             </tr>
@@ -537,7 +536,7 @@ export function InvoicePrintView({ invoiceId, userData }: InvoicePrintViewProps)
                 <td style={{ textAlign: "center" }}>{item.quantity}</td>
                 <td style={{ textAlign: "right" }}>{item.price.toFixed(2)}</td>
                 <td className="text-right">
-                  {+calculateLineTotal(item).toFixed(2) - +item.price.toFixed(2)}{" "}
+                {(+calculateLineTotal(item).toFixed(2) - +item.price.toFixed(2)).toExponential(2)}{" "}
                   <span style={{ color: "#374151" }}>({item.taxRate}%)</span>
                 </td>
                 <td className="text-right font-medium" style={{ color: "#111827" }}>

@@ -1,3 +1,5 @@
+import { formatToLocalISO } from "./utils";
+
 interface QRCodeData {
   sellerName: string;
   vatRegistrationNumber: string;
@@ -7,7 +9,7 @@ interface QRCodeData {
 }
 
 function getTLVForValue(tagNum: string, tagValue: string): Buffer {
-  console.log(tagNum, tagValue);
+  // console.log(tagNum, tagValue);
   // Convert tag number to buffer (1 byte)
   const tagBuf = Buffer.from([parseInt(tagNum)]);
 
@@ -51,7 +53,8 @@ export function formatAmount(value: number): string {
 
 export function formatTimestamp(date: Date): string {
   // ZATCA requires ISO 8601 format: YYYY-MM-DDTHH:mm:ssZ (without milliseconds)
-  return date.toISOString().split(".")[0] + "Z";
+  // return date.toISOString().split(".")[0] + "Z"; //TODO: this needs to be changed according to zatca requirements
+  return formatToLocalISO(date);
 }
 
 export function generateInvoiceQRCode(params: {

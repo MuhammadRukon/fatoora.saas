@@ -131,7 +131,7 @@ export const Invoices: CollectionConfig = {
         {
           name: "account",
           type: "text",
-          required: true,
+          // required: true, //TODO: might need to enforce it later
         },
         {
           name: "quantity",

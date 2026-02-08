@@ -18,3 +18,12 @@ export function formatDate(dateString: string) {
     day: "numeric",
   });
 }
+
+export function formatToLocalISO (date: Date | string | number): string {
+  const d = new Date(date);
+  
+  const tzOffset = d.getTimezoneOffset() * 60000; 
+  const localISOTime = new Date(d.getTime() - tzOffset).toISOString().slice(0, -1);
+  
+  return localISOTime;
+};

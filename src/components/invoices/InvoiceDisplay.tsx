@@ -192,24 +192,29 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
             <table className="w-full text-sm rounded-xl">
               <thead className="border-b border-gray-200">
                 <tr className="*:py-3 *:px-4 *:font-semibold text-gray-700">
+                  <th className="text-left">No.</th>
                   <th className="text-left">Description</th>
-                  <th className="text-left">Account</th>
+                  {/* <th className="text-left">Account</th> */}
                   <th className="text-center w-24">Qty</th>
-                  <th className="text-right w-32">Price</th>
-                  <th className="text-right w-24">Tax Rate</th>
-                  <th className="text-right w-32">Total</th>
+                  <th className="text-right w-42">Price</th>
+                  <th className="text-right w-40">Tax Rate</th>
+                  <th className="text-right w-42">Total</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.rowEntries.map((item, index) => (
                   <tr key={index} className="border-b *:px-4 *:py-4 border-gray-100">
+                    <td className="text-gray-900">{index + 1}</td>
                     <td className="text-gray-900">{item.description}</td>
-                    <td className="text-gray-600">{item.account}</td>
+                    {/* <td className="text-gray-600">{item.account}</td> */}
                     <td className="text-center text-gray-900">{item.quantity}</td>
                     <td className="text-right text-gray-900">
                       SAR {item.price.toFixed(2)}
                     </td>
-                    <td className="text-right text-gray-600">{item.taxRate}%</td>
+                    <td className="text-right text-gray-600">
+                      {(+calculateLineTotal(item).toFixed(2) - +item.price.toFixed(2)).toFixed(2)} {" "}
+                      <span style={{ color: "#374151" }}>({item.taxRate}%)</span>
+                    </td>
                     <td className="text-right font-medium text-gray-900">
                       SAR {calculateLineTotal(item).toFixed(2)}
                     </td>
@@ -275,4 +280,20 @@ export function InvoiceDisplay({ invoice, userData }: InvoiceDisplayProps) {
       </div>
     </Card>
   );
+}
+
+{
+  /* 
+<td>{item.description}</td>
+{/* <td>{item.account}</td> 
+{/* <td style={{ textAlign: "center" }}>{item.quantity}</td>
+<td style={{ textAlign: "right" }}>{item.price.toFixed(2)}</td>
+<td className="text-right">
+  {+calculateLineTotal(item).toFixed(2) - +item.price.toFixed(2)}{" "}
+  <span style={{ color: "#374151" }}>({item.taxRate}%)</span>
+</td>
+<td className="text-right font-medium" style={{ color: "#111827" }}>
+  {calculateLineTotal(item).toFixed(2)}
+</td>
+</tr>*/
 }
